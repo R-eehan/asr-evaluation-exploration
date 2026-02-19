@@ -1,0 +1,53 @@
+{
+  "_instructions": "Fill this in after recording your code-mixed clips. Each entry maps an audio filename to its ground truth transcription and metadata.",
+  "clips": [
+    {
+      "filename": "personal_hi_en_01.wav",
+      "text": "",
+      "language": "hi-en",
+      "scenario": "S3",
+      "description": "Hindi-English code-mixed banking complaint",
+      "notes": ""
+    },
+    {
+      "filename": "personal_hi_en_02.wav",
+      "text": "",
+      "language": "hi-en",
+      "scenario": "S3",
+      "description": "Hindi-English code-mixed banking query",
+      "notes": ""
+    },
+    {
+      "filename": "personal_hi_en_03.wav",
+      "text": "",
+      "language": "hi-en",
+      "scenario": "S5",
+      "description": "Hindi-English code-mixed in noisy environment",
+      "notes": ""
+    },
+    {
+      "filename": "personal_kn_en_01.wav",
+      "text": "",
+      "language": "kn-en",
+      "scenario": "S4",
+      "description": "Kannada-English code-mixed banking conversation",
+      "notes": ""
+    },
+    {
+      "filename": "personal_kn_en_02.wav",
+      "text": "",
+      "language": "kn-en",
+      "scenario": "S4",
+      "description": "Kannada-English code-mixed banking query",
+      "notes": ""
+    },
+    {
+      "filename": "personal_kn_en_03.wav",
+      "text": "",
+      "language": "kn-en",
+      "scenario": "S5",
+      "description": "Kannada-English code-mixed in noisy environment",
+      "notes": ""
+    }
+  ]
+}

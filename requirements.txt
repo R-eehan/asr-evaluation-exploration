@@ -1,0 +1,24 @@
+# Core
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# Dataset downloads
+datasets>=2.19.0,<4.0.0  # v4+ requires torchcodec/PyTorch for audio; v3.x uses soundfile
+soundfile>=0.12.0
+huggingface-hub>=0.23.0
+
+# Audio handling
+pydub>=0.25.1
+
+# Metrics (Day 2 — listed here for completeness)
+# jiwer>=3.0.0
+# pandas>=2.0.0
+
+# Visualization (Day 2)
+# matplotlib>=3.8.0
+# plotly>=5.18.0
+# jupyter>=1.0.0
+
+# Provider SDKs (Day 2)
+# openai>=1.0.0
+# elevenlabs>=1.0.0

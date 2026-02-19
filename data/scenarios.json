@@ -1,0 +1,67 @@
+{
+  "scenarios": [
+    {
+      "id": "S1",
+      "name": "Hindi complaint",
+      "description": "Customer complaint in Hindi about failed transaction",
+      "language": "hi",
+      "example_utterance": "Mera account se paisa kat gaya lekin transfer nahi hua",
+      "tags": ["complaint", "hindi", "transaction"]
+    },
+    {
+      "id": "S2",
+      "name": "Indian English inquiry",
+      "description": "Account balance inquiry in Indian-accented English",
+      "language": "en-IN",
+      "example_utterance": "I'd like to check my savings account balance please",
+      "tags": ["inquiry", "english", "balance"]
+    },
+    {
+      "id": "S3",
+      "name": "Hindi-English code-mixed complaint",
+      "description": "Code-mixed Hindi-English complaint about pending payment",
+      "language": "hi-en",
+      "example_utterance": "Sir mera credit card ka bill payment hogaya tha but still showing pending hai",
+      "tags": ["complaint", "code-mixed", "hindi-english", "payment"]
+    },
+    {
+      "id": "S4",
+      "name": "Kannada banking query",
+      "description": "Natural Kannada banking conversation",
+      "language": "kn",
+      "example_utterance": "",
+      "tags": ["query", "kannada", "banking"]
+    },
+    {
+      "id": "S5",
+      "name": "Noisy environment",
+      "description": "Banking queries with background noise simulating call center/phone line",
+      "language": "mixed",
+      "example_utterance": "",
+      "tags": ["noisy", "robustness"]
+    }
+  ],
+  "audio_sources": {
+    "indicvoices": {
+      "target_clips": 10,
+      "languages": ["Hindi", "Kannada"],
+      "scenarios": ["S1", "S4"]
+    },
+    "svarah": {
+      "target_clips": 5,
+      "languages": ["en-IN"],
+      "scenarios": ["S2"]
+    },
+    "common_voice": {
+      "target_clips": 5,
+      "languages": ["hi", "kn"],
+      "scenarios": ["S1", "S4"]
+    },
+    "personal": {
+      "target_clips": 6,
+      "languages": ["hi-en", "kn-en"],
+      "scenarios": ["S3", "S5"],
+      "note": "Recorded by Reehan — 2-3 Hindi-English, 2-3 Kannada-English code-mixed clips"
+    }
+  }
+}

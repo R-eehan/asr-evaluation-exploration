@@ -1,0 +1,233 @@
+[
+  {
+    "filename": "indicvoices_hi_01.wav",
+    "source": "indicvoices",
+    "language": "hi",
+    "text": "जिसके कारण वह अच्छे से चल रहा है और बिल्कुल भी खराब नहीं है इसलिए मुझे यह बहुत पसंद आया",
+    "duration": 7.9480208333,
+    "scenario": "S1",
+    "has_banking_keywords": true,
+    "speaker_id": "S4256820200338001",
+    "gender": "Female"
+  },
+  {
+    "filename": "indicvoices_hi_02.wav",
+    "source": "indicvoices",
+    "language": "hi",
+    "text": "पर वह बिल्कुल भी अच्छा नहीं निकला क्योंकि मैं इसे महंगे दाम पे खरीदा था पर इसकी इंक बिल्कुल भी अच्छी नहीं है",
+    "duration": 9.472,
+    "scenario": "S1",
+    "has_banking_keywords": true,
+    "speaker_id": "S4256820200338001",
+    "gender": "Female"
+  },
+  {
+    "filename": "indicvoices_hi_03.wav",
+    "source": "indicvoices",
+    "language": "hi",
+    "text": "इसके अलावा यह बहुत रुक रुक के चलता है यह एक बॉल पेन है पर फिर भी इसका इंक फैलने लगता है इसलिए मुझे यह प्रोडक्ट बिल्कुल भी अच्छा नहीं लगा",
+    "duration": 12.352,
+    "scenario": "S1",
+    "has_banking_keywords": true,
+    "speaker_id": "S4256820200338001",
+    "gender": "Female"
+  },
+  {
+    "filename": "indicvoices_hi_04.wav",
+    "source": "indicvoices",
+    "language": "hi",
+    "text": "जो कि जब सब्ज़ी रेडी हो गई तो सब को ज़्यादातर बहुत ज़्यादा पसंद आया था वो सब शायद तारीफ़ भी कर रहे थे कि जो मसाला है उस में कोई भी चीज़ की मात्रा बहुत ज़्यादा या बहुत कम नहीं है सब बिल्कुल बराबर मात्राओं में यूज़ किया गया है जिसकी वजह से सब्ज़ी काफ़ी स्वादिष्ट बनी थी और",
+    "duration": 17.2530208333,
+    "scenario": "S1",
+    "has_banking_keywords": true,
+    "speaker_id": "S4256942400332561",
+    "gender": "Female"
+  },
+  {
+    "filename": "indicvoices_hi_05.wav",
+    "source": "indicvoices",
+    "language": "hi",
+    "text": "पाकिस्तान अफगानिस्तान",
+    "duration": 3.712,
+    "scenario": "S1",
+    "has_banking_keywords": true,
+    "speaker_id": "S4257196900365559",
+    "gender": "Male"
+  },
+  {
+    "filename": "indicvoices_hi_06.wav",
+    "source": "indicvoices",
+    "language": "hi",
+    "text": "देखिए मैंने कितने चार हज़ार का ऑर्डर बुक किया है और आपने मुझे डिस्काउंट नहीं दिया बिल्कुल बिल्कुल भी डिस्काउंट नहीं दिया है इसपे मुझे आपसे चालीस प्रतिशत डिस्काउंट दे सकते हैं ये आपके हाथ में है और आपको देना ही होगा क्योंकि चार हज़ार का ऑर्डर है ऐसे तो हैं नहीं कि मैंने दस बीस रुपये का ऑर्डर बुक किया है ऐसा नहीं है मैंने चार हज़ार का ऑर्डर दिया है आपको",
+    "duration": 19.5530208333,
+    "scenario": "S1",
+    "has_banking_keywords": true,
+    "speaker_id": "S4257196900365559",
+    "gender": "Male"
+  },
+  {
+    "filename": "indicvoices_hi_07.wav",
+    "source": "indicvoices",
+    "language": "hi",
+    "text": "मेरे पास ऑनलाइन रुपए नही है तो मैं आपको नगद भुगतान कर सकता हूँ",
+    "duration": 4.3840208333,
+    "scenario": "S1",
+    "has_banking_keywords": true,
+    "speaker_id": "S4258354000329548",
+    "gender": "Male"
+  },
+  {
+    "filename": "indicvoices_ka_01.wav",
+    "source": "indicvoices",
+    "language": "ka",
+    "text": "ನಂತರ ಅದು ಅದಾದ ನಂತರ ನನ್ನ ವಿವಿದ ಕಾರ್ಯಕ್ರಮಗಳು ಅಥ್ವಾ ಆಟಗಳು ಅಂತ ಹೇಳಿದರೆ ನಾನು ಕಬಡ್ಡಿ ಆಡೋದು ಇಷ್ಟ ವಾಲಿಬಾಲ್",
+    "duration": 9.5040208333,
+    "scenario": "S4",
+    "has_banking_keywords": true,
+    "speaker_id": "S4257364400337644",
+    "gender": "Male"
+  },
+  {
+    "filename": "indicvoices_ka_02.wav",
+    "source": "indicvoices",
+    "language": "ka",
+    "text": "ತುಂಬವೂ ಸ್ವಲ್ಪ ಚಿಕ್ಕದಾಗಿತ್ತು ಸೊ ಅದಕ್ಕಾಗಿ ನಾನು ಒಂದು ಎಕ್ಸ್ಟ್ರಾ ಲೇಸನ್ನು ಆರ್ಡರ್ ಮಾಡಿದೆ ಅದು ಕೂಡ ಇಮಿಡಿಯೇಟಾಗೆ ಬಂದಿತ್ತು ಈಗ ಬಿಸ್ ಬಿಗ್ ಬಾಸ್ಕೆಟ್ನಲ್ಲಿ ಪ್ರತಿವಾರ ಶುಕ್ರವಾರ ಮತ್ತು ಭಾನುವಾರ ನನ್ನ ಮನೆಗೆ ಮೀನು ಮತ್ತು ಹಣ್ಣು ತರಕಾರಿಗಳನ್ನು ಆರ್ಡರ್ ಮಾಡುತ್ತೇನೆ",
+    "duration": 17.1540208333,
+    "scenario": "S4",
+    "has_banking_keywords": true,
+    "speaker_id": "S4257364400337644",
+    "gender": "Male"
+  },
+  {
+    "filename": "indicvoices_ka_03.wav",
+    "source": "indicvoices",
+    "language": "ka",
+    "text": "ಎಸ್ ಬಿ ಅಕೌಂಟಾ ಕೆನರ ಬ್ಯಾಂಕ್ ಅಕೌಂಟಾ ಮುಂತಾದವು ಅದರಲ್ಲಿ ಉಳಿತಾಯ ಖಾತೆನ ಚಾಲ್ತಿ ಖಾತೆನ ವಿವರಿಸಬೇಕು ಈ ರೀತಿ ಉಳಿತಾಯ ಖಾತೆ ಅಂದರೆ ಏನಾಗುತ್ತೆ ಚಾಲ್ತಿ ಖಾತೆಯನ್ನು ಏನು ಮಾಡುತ್ತೆ ಅಂತ ಹೇಳಬೇಕು ಅವನಿಗೆ ಉಳಿತಾಯ ಖಾತೆ ಆದರೆ ಉಳಿತಾಯ ಮಾಡುವಂತಾರೆ ಮಾಡಿದರೆ ಚಾಲ್ತಿ ಖಾತೆ ಅಂದರೆ ಬಿಸ್ನೆಸ್ ಅಕೌಂಟ್ ಬ್ಯಾಲೆನ್ಸ್",
+    "duration": 22.431,
+    "scenario": "S4",
+    "has_banking_keywords": true,
+    "speaker_id": "S4257861400343288",
+    "gender": "Male"
+  },
+  {
+    "filename": "indicvoices_ka_04.wav",
+    "source": "indicvoices",
+    "language": "ka",
+    "text": "ನಲ್ವತ್ತು ಶೇಕಡಾ ಡಿಸ್ಕೌಂಟ್ ಎಲ್ಲ ಹಣ್ಣಿನ ರಸಗಳ ಮೇಲೂ ಅನ್ವಯ ಆಗುತ್ತಾ",
+    "duration": 5.167,
+    "scenario": "S4",
+    "has_banking_keywords": true,
+    "speaker_id": "S4257923500382544",
+    "gender": "Female"
+  },
+  {
+    "filename": "indicvoices_ka_05.wav",
+    "source": "indicvoices",
+    "language": "ka",
+    "text": "ಮನೆಯಲ್ಲೇ ಎಲ್ಲರ್ಗು ಏನು ಬೇಕೊ ಎಲ್ಲ ಕೇಳಿ ಮಾಡಿ ಹಾಕ್ತೀನಿ ಎಲ್ಲರ್ಗು ಮಾಡ್ಕೊಡ್ತೀನಿ ನಾನು ಮಸಾಲೆ ಐಟಮ್ಮು ಆಚೆ ಆಚೆ ಫುಡ್ಡು ಎಲ್ಲ ಅವಾಯ್ಡ್ ಮಾಡ್ಬಿಡ್ತೀನಿ",
+    "duration": 7.9360208333,
+    "scenario": "S4",
+    "has_banking_keywords": true,
+    "speaker_id": "S4257923500382544",
+    "gender": "Female"
+  },
+  {
+    "filename": "indicvoices_ka_06.wav",
+    "source": "indicvoices",
+    "language": "ka",
+    "text": "ನಿಮ್ಮಲ್ಲಿ ವಿನಂತಿಸಿಕೊಳ್ಳುತ್ತೇವೆ ಆ ಈ ಹಣವನ್ನು ಹಿಂದಿರುಗಿಸಲು ನಿಮಗೆ ಬೇಕಾದ",
+    "duration": 5.439,
+    "scenario": "S4",
+    "has_banking_keywords": true,
+    "speaker_id": "S4258174200327427",
+    "gender": "Female"
+  },
+  {
+    "filename": "indicvoices_ka_07.wav",
+    "source": "indicvoices",
+    "language": "ka",
+    "text": "ಮರುಪಾವತಿಸಬೇಕಾಗಿ ವಿನಂತಿಸುತ್ತೇನೆ ಆ ಆರ್ಡರ್ನ ಸಂಖ್ಯೆಯು ಮತ್ತು ಹಣ ಪಾವತಿಸಿದ ಮಾಹಿತಿಯಂತ",
+    "duration": 7.2650208333,
+    "scenario": "S4",
+    "has_banking_keywords": true,
+    "speaker_id": "S4258174200327427",
+    "gender": "Female"
+  },
+  {
+    "filename": "svarah_en_01.wav",
+    "source": "svarah",
+    "language": "en-IN",
+    "text": "How much money is left in my Arunachal Pradesh Rural Bank account?",
+    "duration": 3.6943125,
+    "scenario": "S2",
+    "has_banking_keywords": true,
+    "primary_language": "Maithili",
+    "gender": "Male"
+  },
+  {
+    "filename": "svarah_en_02.wav",
+    "source": "svarah",
+    "language": "en-IN",
+    "text": "Will I be able to pay using UPI apps on Hotstar website?",
+    "duration": 3.8423125,
+    "scenario": "S2",
+    "has_banking_keywords": true,
+    "primary_language": "Nepali",
+    "gender": "Male"
+  },
+  {
+    "filename": "svarah_en_03.wav",
+    "source": "svarah",
+    "language": "en-IN",
+    "text": "it is something which gives you warmth and the flavours are very different from the kind of food we as North Indians eat.",
+    "duration": 13.5411875,
+    "scenario": "S2",
+    "has_banking_keywords": true,
+    "primary_language": "Hindi",
+    "gender": "Female"
+  },
+  {
+    "filename": "svarah_en_04.wav",
+    "source": "svarah",
+    "language": "en-IN",
+    "text": "hang on the rock. I find it useful and best because it helps me that we climb faster.",
+    "duration": 9.5431875,
+    "scenario": "S2",
+    "has_banking_keywords": true,
+    "primary_language": "Marathi",
+    "gender": "Female"
+  },
+  {
+    "filename": "svarah_en_05.wav",
+    "source": "svarah",
+    "language": "en-IN",
+    "text": "English was taught quite effectively by our teachers. They stressed upon the importance and use of grammar and the students were expected to give their 100% in learning the language.",
+    "duration": 11.43175,
+    "scenario": "S2",
+    "has_banking_keywords": true,
+    "primary_language": "Kashmiri",
+    "gender": "Female"
+  },
+  {
+    "filename": "svarah_en_06.wav",
+    "source": "svarah",
+    "language": "en-IN",
+    "text": "Show my DTH bill readings from the last 6 months.",
+    "duration": 3.0410625,
+    "scenario": "S2",
+    "has_banking_keywords": true,
+    "primary_language": "Bengali",
+    "gender": "Male"
+  },
+  {
+    "filename": "svarah_en_07.wav",
+    "source": "svarah",
+    "language": "en-IN",
+    "text": "The radiation, the chemotherapy, everything, every every option for cancer treatment is available over here and it is largely used not only by the people of Gujarat but also by the nearby states.",
+    "duration": 14.36525,
+    "scenario": "S2",
+    "has_banking_keywords": true,
+    "primary_language": "Gujarati",
+    "gender": "Female"
+  }
+]

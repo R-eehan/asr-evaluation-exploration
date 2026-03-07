@@ -1,53 +1,61 @@
 {
-  "_instructions": "Fill this in after recording your code-mixed clips. Each entry maps an audio filename to its ground truth transcription and metadata.",
+  "_instructions": "Ground truth in native script (Devanagari for Hindi-English, Kannada for Kannada-English). text_roman preserves the original Roman transliteration for reference. VERIFY these match exactly what was spoken.",
   "clips": [
     {
-      "filename": "personal_hi_en_01.wav",
-      "text": "",
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "text": "आपने रिसेंटली एक क्रेडिट कार्ड एप्लिकेशन सबमिट किया था क्या ये एप्लिकेशन आपने खुद अप्लाई किया था ऑनलाइन या ब्रांच के थ्रू",
+      "text_roman": "Aapne recently ek credit card application submit kiya tha. Kya ye application aapne khud apply kiya tha online ya branch ke through?",
       "language": "hi-en",
       "scenario": "S3",
-      "description": "Hindi-English code-mixed banking complaint",
-      "notes": ""
+      "description": "Hindi-English code-mixed credit card application query"
     },
     {
-      "filename": "personal_hi_en_02.wav",
-      "text": "",
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "text": "मेरे साथ फ्रॉड हुआ है किसी ने मेरा नंबर लेके उसपे ही उससे जीपे से अपने अकाउंट में पैसा ट्रांसफर कर लिया मदद कीजिए",
+      "text_roman": "mere saath fraud hua hai, kisi ne mera number leke, uspe hi, usse Gpay se apne account mein paisa transfer kar liya. Madad kijiye",
       "language": "hi-en",
       "scenario": "S3",
-      "description": "Hindi-English code-mixed banking query",
-      "notes": ""
+      "description": "Hindi-English code-mixed GPay fraud complaint"
     },
     {
-      "filename": "personal_hi_en_03.wav",
-      "text": "",
+      "filename": "transaction-check-1-hinglish.m4a",
+      "text": "हेलो सर मैं बैंक से बोल रहा हूँ हमें आपके कार्ड पर एक अनयूज़ुअल ट्रांज़ैक्शन दिखा है क्या आपने कल अठारह हज़ार पाँच सौ का ऑनलाइन पेमेंट किया था",
+      "text_roman": "Hello sir, main bank se bol raha hoon. Humein aapke card par ek unusual transaction dikha hai. Kya aapne kal ₹18,500 ka online payment kiya tha?",
       "language": "hi-en",
-      "scenario": "S5",
-      "description": "Hindi-English code-mixed in noisy environment",
-      "notes": ""
+      "scenario": "S3",
+      "description": "Hindi-English code-mixed transaction check query"
     },
     {
-      "filename": "personal_kn_en_01.wav",
-      "text": "",
+      "filename": "transaction-check-2-hinglish.m4a",
+      "text": "अगर ये ट्रांज़ैक्शन आपने नहीं किया है तो क्या आप चाहेंगे कि हम तुरंत कार्ड ब्लॉक करके डिस्प्यूट प्रोसेस स्टार्ट करें",
+      "text_roman": "Agar ye transaction aapne nahi kiya hai, toh kya aap chahenge ki hum turant card block karke dispute process start karein?",
+      "language": "hi-en",
+      "scenario": "S3",
+      "description": "Hindi-English code-mixed transaction check query (variant)"
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "text": "ನಮಸ್ಕಾರ ಸರ್ ಬ್ಯಾಂಕ್ ನಿಂದ ಮಾತಾಡ್ತಿದ್ದೀನಿ ನಿಮ್ಮ ಡೆಬಿಟ್ ಕಾರ್ಡ್ ಬಗ್ಗೆ ಸ್ವಲ್ಪ ವೆರಿಫಿಕೇಶನ್ ಮಾಡಬೇಕು ನಿಮ್ಮ ಫುಲ್ ನೇಮ್ ಮತ್ತು ಡೇಟ್ ಆಫ್ ಬರ್ತ್ ಕನ್ಫರ್ಮ್ ಮಾಡಬಹುದಾ",
+      "text_roman": "Namaskara sir, bank ninda maatadthiddini. Nim debit card bagge swalpa verification madbeku. Nim full name mattu date of birth confirm madbahuda?",
       "language": "kn-en",
       "scenario": "S4",
-      "description": "Kannada-English code-mixed banking conversation",
-      "notes": ""
+      "description": "Kannada-English code-mixed debit card verification"
     },
     {
-      "filename": "personal_kn_en_02.wav",
-      "text": "",
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "text": "ಹಲೋ ಸರ್ ನಿಮ್ಮ ಪರ್ಸನಲ್ ಲೋನ್ ಇನ್ಕ್ವೈರಿ ಬಗ್ಗೆ ಕಾಲ್ ಮಾಡ್ತಿದ್ದೀನಿ ನಿಮಗೆ ಲೋನ್ ಯಾವ ಪರ್ಪಸ್‌ಗೆ ಬೇಕು ಅಂತ ಸ್ವಲ್ಪ ಎಕ್ಸ್‌ಪ್ಲೈನ್ ಮಾಡಬಹುದಾ",
+      "text_roman": "Hello sir, nim personal loan inquiry bagge call madthiddini. Nimge loan yav purpose ge beku anta swalpa explain madbahuda?",
       "language": "kn-en",
       "scenario": "S4",
-      "description": "Kannada-English code-mixed banking query",
-      "notes": ""
+      "description": "Kannada-English code-mixed loan enquiry"
     },
     {
-      "filename": "personal_kn_en_03.wav",
-      "text": "",
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "text": "ಹಲೋ ಸರ್ ನಾನು ಬ್ಯಾಂಕ್ ಫ್ರಾಡ್ ಮಾನಿಟರಿಂಗ್ ಟೀಮ್ ಇಂದ ಕಾಲ್ ಮಾಡ್ತಿದ್ದೀನಿ ನಿಮ್ಮ ಡೆಬಿಟ್ ಕಾರ್ಡ್ ಮೇಲೆ ಒಂದು ಅನ್‌ಯೂಜುಅಲ್ ಆನ್‌ಲೈನ್ ಟ್ರಾನ್ಸಾಕ್ಷನ್ ಟ್ರೈ ಆಗಿದೆ ನೈಂಟೀನ್ ಥೌಸಂಡ್ ಎಯ್ಟ್ ಹಂಡ್ರೆಡ್ ಆನ್‌ಲೈನ್ ಪೇಮೆಂಟ್ ಟ್ರೈ ಆಗಿದೆ ಮುಂಬೈ ಇಂದ ನೀವು ಆ ಟ್ರಾನ್ಸಾಕ್ಷನ್ ಮಾಡಿದ್ದೀರಾ",
+      "text_roman": "Hello sir, naan bank fraud monitoring team inda call madthiddini. Nim debit card mele ondu unusual online transaction try agide. 19,800 online payment try agide Mumbai inda. Neevu aa transaction madidira?",
       "language": "kn-en",
-      "scenario": "S5",
-      "description": "Kannada-English code-mixed in noisy environment",
-      "notes": ""
+      "scenario": "S4",
+      "description": "Kannada-English code-mixed suspicious transaction report"
     }
   ]
 }

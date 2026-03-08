@@ -95,14 +95,6 @@ Why it matters: Even if the AI misses a small word like "the" or "uhm" (which af
 - **ElevenLabs** : scribe_v2 (latest) + scribe_v1 (legacy)
 - **OpenAI** : gpt-4o-transcribe (latest) + whisper-1 (legacy)
 
-### Metrics
-
-- **WER** (Word Error Rate). The standard ASR metric. Measures word-level substitutions, deletions, and insertions against ground truth.
-- **CER** (Character Error Rate). Better for agglutinative Indic languages where a single character error inflates WER disproportionately.
-- **Script-normalized WER**. WER recomputed after mapping Latin loanwords to native script. Without this, code-mixed evaluation is unfair.
-- **Entity accuracy**. Did the model capture banking-critical terms (amounts, card types, transaction terms)?
-- **Latency**. API response time per audio file.
-
 ### Caveats
 
 This is a directional evaluation, not a statistically significant benchmark. n=28 is too small for definitive conclusions. The public dataset audio covers general topics (cooking, sports), not banking-specific conversations. Code-mixed recordings are personal (confound: speaker identity vs. code-mixing difficulty). These findings suggest patterns worth investigating at scale.

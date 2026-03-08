@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASR Evaluation Pipeline — Code Walkthrough</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg-surface: #161b22;
+    --bg-card: #1c2128;
+    --bg-code: #0d1117;
+    --border: #30363d;
+    --border-active: #58a6ff;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --text-bright: #f0f6fc;
+    --accent: #58a6ff;
+    --accent-dim: #1f3a5f;
+    --red: #f85149;
+    --orange: #d29922;
+    --green: #3fb950;
+    --purple: #bc8cff;
+    --pink: #f778ba;
+    --yellow: #e3b341;
+    --cyan: #39d2c0;
+    --syn-keyword: #ff7b72;
+    --syn-string: #a5d6ff;
+    --syn-comment: #8b949e;
+    --syn-type: #79c0ff;
+    --syn-func: #d2a8ff;
+    --syn-number: #79c0ff;
+    --syn-property: #ffa657;
+    --syn-operator: #c9d1d9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 280px; min-width: 280px;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); }
+  .sidebar-header h1 { font-size: 18px; font-weight: 700; color: var(--text-bright); letter-spacing: -0.3px; margin-bottom: 4px; }
+  .sidebar-header p { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .nav-list { flex: 1; overflow-y: auto; padding: 8px; }
+  .nav-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 12px; border-radius: 8px; cursor: pointer;
+    transition: all 0.15s ease; margin-bottom: 2px; position: relative;
+  }
+  .nav-item:hover { background: rgba(88,166,255,0.06); }
+  .nav-item.active { background: var(--accent-dim); }
+  .nav-item.active .nav-num { background: var(--accent); color: var(--bg); }
+  .nav-item.visited .nav-num { background: var(--green); color: var(--bg); }
+  .nav-num {
+    width: 24px; height: 24px; min-width: 24px; border-radius: 50%;
+    background: var(--border); color: var(--text-muted);
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px; transition: all 0.15s ease;
+  }
+  .nav-label { flex: 1; }
+  .nav-label .title { font-size: 13px; font-weight: 600; color: var(--text-bright); line-height: 1.3; }
+  .nav-label .file { font-size: 11px; font-family: 'SF Mono','Fira Code','JetBrains Mono',monospace; color: var(--text-muted); margin-top: 2px; }
+  .nav-item:not(:last-child)::after {
+    content: ''; position: absolute; left: 23px; top: 36px;
+    width: 2px; height: calc(100% - 16px); background: var(--border);
+  }
+  .nav-item.visited:not(:last-child)::after { background: var(--green); opacity: 0.4; }
+  .sidebar-footer {
+    padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px;
+  }
+  .sidebar-footer button {
+    flex: 1; padding: 8px; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text); font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .sidebar-footer button:hover { border-color: var(--accent); color: var(--accent); }
+  .sidebar-footer button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* Main */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* Pipeline bar */
+  .pipeline-bar {
+    background: var(--bg-surface); border-bottom: 1px solid var(--border);
+    padding: 12px 24px; overflow-x: auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .pipeline { display: flex; align-items: center; gap: 0; min-width: max-content; }
+  .pipeline-step { display: flex; align-items: center; gap: 0; cursor: pointer; }
+  .pipeline-node {
+    padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 600;
+    white-space: nowrap; transition: all 0.15s; border: 1px solid transparent;
+  }
+  .pipeline-node.idle { background: var(--bg-card); color: var(--text-muted); }
+  .pipeline-node.active { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+  .pipeline-node.visited { background: rgba(63,185,80,0.1); color: var(--green); }
+  .pipeline-arrow { color: var(--text-muted); font-size: 14px; margin: 0 6px; opacity: 0.5; }
+  .pipeline-arrow.active { color: var(--accent); opacity: 1; }
+  .pipeline-arrow.visited { color: var(--green); opacity: 0.6; }
+
+  /* Toggle */
+  .toggle-group { display: flex; gap: 2px; background: var(--bg-card); border-radius: 6px; padding: 2px; border: 1px solid var(--border); flex-shrink: 0; }
+  .toggle-btn {
+    padding: 5px 12px; border-radius: 5px; font-size: 11px; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.15s;
+    background: transparent; color: var(--text-muted);
+  }
+  .toggle-btn.active { background: var(--accent-dim); color: var(--accent); }
+  .toggle-btn:hover:not(.active) { color: var(--text); }
+
+  /* Content */
+  .content { flex: 1; overflow-y: auto; padding: 32px 40px 80px; scroll-behavior: smooth; }
+  .step-content { max-width: 800px; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .step-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+  }
+  .step-badge .snum { background: var(--accent); color: var(--bg); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .step-title { font-size: 28px; font-weight: 700; color: var(--text-bright); letter-spacing: -0.5px; margin-bottom: 6px; }
+  .step-file {
+    font-size: 14px; font-family: 'SF Mono','Fira Code','JetBrains Mono',monospace;
+    color: var(--accent); margin-bottom: 24px; display: inline-block;
+    padding: 2px 8px; background: var(--accent-dim); border-radius: 4px;
+  }
+  .step-desc { font-size: 15px; line-height: 1.7; color: var(--text); margin-bottom: 24px; }
+  .step-desc strong { color: var(--text-bright); }
+
+  /* Concept boxes */
+  .concept {
+    background: rgba(57,210,192,0.06); border: 1px solid rgba(57,210,192,0.2);
+    border-radius: 10px; padding: 20px 24px; margin: 20px 0 28px;
+    position: relative;
+  }
+  .concept::before {
+    content: 'CONCEPT'; position: absolute; top: -9px; left: 16px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    color: var(--cyan); background: var(--bg); padding: 0 8px;
+  }
+  .concept h4 { color: var(--cyan); font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+  .concept p { font-size: 14px; line-height: 1.7; color: var(--text); margin-bottom: 10px; }
+  .concept p:last-child { margin-bottom: 0; }
+  .concept strong { color: var(--text-bright); }
+  .concept code { font-size: 12px; }
+
+  /* Code blocks */
+  .code-block { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; margin: 16px 0 24px; overflow: hidden; }
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px; background: var(--bg-surface); border-bottom: 1px solid var(--border);
+    font-size: 12px; font-family: 'SF Mono','Fira Code','JetBrains Mono',monospace; color: var(--text-muted);
+  }
+  .code-header .lines { font-size: 11px; }
+  pre {
+    padding: 16px; overflow-x: auto;
+    font-family: 'SF Mono','Fira Code','JetBrains Mono',monospace;
+    font-size: 13px; line-height: 1.6; tab-size: 4;
+  }
+  .kw { color: var(--syn-keyword); } .str { color: var(--syn-string); }
+  .cmt { color: var(--syn-comment); font-style: italic; } .ty { color: var(--syn-type); }
+  .fn { color: var(--syn-func); } .num { color: var(--syn-number); }
+  .prop { color: var(--syn-property); } .op { color: var(--syn-operator); }
+  .hl { background: rgba(88,166,255,0.12); display: inline; border-radius: 2px; padding: 1px 0; }
+
+  /* Callout boxes */
+  .callout { border-radius: 8px; padding: 16px 20px; margin: 16px 0 24px; border-left: 3px solid; font-size: 14px; line-height: 1.6; }
+  .callout-title { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .callout.bug { background: rgba(248,81,73,0.08); border-color: var(--red); }
+  .callout.bug .callout-title { color: var(--red); }
+  .callout.decision { background: rgba(88,166,255,0.08); border-color: var(--accent); }
+  .callout.decision .callout-title { color: var(--accent); }
+  .callout.insight { background: rgba(188,140,255,0.08); border-color: var(--purple); }
+  .callout.insight .callout-title { color: var(--purple); }
+  .callout.discovery { background: rgba(63,185,80,0.08); border-color: var(--green); }
+  .callout.discovery .callout-title { color: var(--green); }
+
+  /* Diagram blocks */
+  .diagram {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 20px; margin: 16px 0 24px; overflow-x: auto;
+    font-family: 'SF Mono','Fira Code','JetBrains Mono',monospace;
+    font-size: 13px; line-height: 1.5; color: var(--text-muted); white-space: pre;
+  }
+  .diagram .hl { color: var(--accent); font-weight: 600; }
+  .diagram .g { color: var(--green); } .diagram .r { color: var(--red); }
+  .diagram .o { color: var(--orange); } .diagram .p { color: var(--purple); }
+  .diagram .c { color: var(--cyan); }
+
+  code {
+    font-family: 'SF Mono','Fira Code','JetBrains Mono',monospace;
+    font-size: 13px; background: var(--bg-card); padding: 2px 6px;
+    border-radius: 4px; color: var(--syn-property);
+  }
+
+  /* KV grid */
+  .kv-grid {
+    display: grid; grid-template-columns: 140px 1fr; gap: 6px 16px;
+    font-size: 13px; margin: 12px 0 24px; padding: 12px 16px;
+    background: var(--bg-card); border-radius: 8px;
+  }
+  .kv-grid dt { color: var(--text-muted); font-weight: 500; }
+  .kv-grid dd { color: var(--text); font-family: 'SF Mono','Fira Code','JetBrains Mono',monospace; font-size: 12px; }
+
+  .next-step {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 32px;
+    padding: 10px 20px; background: var(--accent-dim); border: 1px solid var(--accent);
+    border-radius: 8px; color: var(--accent); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; text-decoration: none;
+  }
+  .next-step:hover { background: rgba(88,166,255,0.2); }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  @media (max-width: 900px) {
+    .sidebar { width: 220px; min-width: 220px; }
+    .content { padding: 24px 20px 80px; }
+    .step-title { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h1>ASR Eval Walkthrough</h1>
+    <p>How I built an evaluation pipeline for speech-to-text models across 3 providers, 5 languages, and 28 audio files.</p>
+  </div>
+  <div class="nav-list" id="navList"></div>
+  <div class="sidebar-footer">
+    <button id="prevBtn" onclick="prevStep()" disabled>&larr; Prev</button>
+    <button id="nextBtn" onclick="nextStep()">Next &rarr;</button>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="pipeline-bar">
+    <div class="pipeline" id="pipelineBar"></div>
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="toggleBoth" onclick="setMode('both')">All</button>
+      <button class="toggle-btn" id="toggleConcepts" onclick="setMode('concepts')">Concepts</button>
+      <button class="toggle-btn" id="toggleCode" onclick="setMode('code')">Code</button>
+    </div>
+  </div>
+  <div class="content" id="content"></div>
+</div>
+
+<script>
+let currentStep = 0;
+const visited = new Set([0]);
+let viewMode = 'both';
+
+function c(html) { return viewMode !== 'code' ? html : ''; }
+function d(html) { return viewMode !== 'concepts' ? html : ''; }
+
+const steps = [
+  {
+    title: "Provider Abstraction",
+    file: "src/providers/",
+    pipelineLabel: "Providers",
+    content: () => `
+      ${c(`
+      <div class="concept">
+        <h4>The problem: 3 providers, 3 completely different APIs</h4>
+        <p>You're testing Sarvam AI, ElevenLabs, and OpenAI. Each has its own authentication method, its own API shape, and its own quirks. Sarvam uses a custom header. ElevenLabs and OpenAI use SDKs. If the evaluation code had to know about each provider's details, adding a fourth provider would mean rewriting the entire pipeline.</p>
+        <p>The solution is a <strong>universal remote</strong>. Each provider gets a thin wrapper (about 30 lines) that exposes one function: <code>transcribe(audio_path, language, model)</code>. The rest of the pipeline calls that function and doesn't care what's behind it.</p>
+      </div>
+
+      <div class="concept">
+        <h4>Language codes are not standard across providers</h4>
+        <p>Sarvam uses BCP-47 codes (<code>hi-IN</code> for Hindi in India). ElevenLabs and OpenAI use ISO-639-1 (<code>hi</code> for Hindi). Same language, different labels. The mapping lives in the evaluation runner, not inside the providers. This way each provider stays clean and the translation happens once in a central place.</p>
+      </div>
+      `)}
+
+      <div class="diagram"><span class="hl">Provider Abstraction Layer</span>
+
+  <span class="c">Audio file</span> + language code
+       |
+  <span class="hl">transcribe(audio_path, language, model)</span>    <-- same call for all 3
+       |
+       +-- <span class="g">Sarvam</span>:    REST API, custom header, MIME workaround
+       +-- <span class="p">ElevenLabs</span>: Python SDK, lazy client init
+       +-- <span class="o">OpenAI</span>:     Python SDK, model-specific params
+       |
+  <span class="hl">Returns</span>: { provider, model, transcript, latency_seconds }</div>
+
+      ${d(`
+      <div class="code-block">
+        <div class="code-header"><span>src/providers/sarvam.py</span><span class="lines">The transcribe interface</span></div>
+        <pre><span class="kw">def</span> <span class="fn">transcribe</span>(
+    audio_path: <span class="ty">str</span>,
+    language_code: <span class="ty">Optional</span>[<span class="ty">str</span>] = <span class="kw">None</span>,
+    model: <span class="ty">str</span> = <span class="str">"saaras:v3"</span>,
+) -> <span class="ty">dict</span>:
+    headers = {<span class="str">"api-subscription-key"</span>: SARVAM_API_KEY}
+
+    <span class="kw">with</span> <span class="fn">open</span>(audio_path, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+        mime_type = mimetypes.guess_type(audio_path)[<span class="num">0</span>] <span class="kw">or</span> <span class="str">"audio/wav"</span>
+        <span class="cmt"># Sarvam API rejects audio/mp4a-latm for .m4a files</span>
+<span class="hl">        <span class="kw">if</span> mime_type == <span class="str">"audio/mp4a-latm"</span>:
+            mime_type = <span class="str">"audio/mp4"</span></span>
+
+        start = time.perf_counter()
+        response = requests.post(API_URL, headers=headers, files=files, data=data)
+        latency = time.perf_counter() - start
+
+    <span class="kw">return</span> {
+        <span class="str">"provider"</span>: <span class="str">"sarvam"</span>, <span class="str">"model"</span>: model,
+        <span class="str">"transcript"</span>: result.get(<span class="str">"transcript"</span>, <span class="str">""</span>),
+        <span class="str">"latency_seconds"</span>: <span class="fn">round</span>(latency, <span class="num">3</span>),
+    }</pre>
+      </div>
+
+      <div class="callout bug">
+        <div class="callout-title">Gotcha: MIME type bug</div>
+        Python's <code>mimetypes.guess_type()</code> returns <code>audio/mp4a-latm</code> for <code>.m4a</code> files. Sarvam's API rejects this with a cryptic 400 error. The highlighted lines override it to <code>audio/mp4</code>. Without this fix, all 7 personal banking recordings (recorded as .m4a on iPhone) fail silently.
+      </div>
+      `)}
+
+      <dl class="kv-grid">
+        <dt>Pattern</dt><dd>Unified transcribe() interface</dd>
+        <dt>Sarvam auth</dt><dd>Custom api-subscription-key header</dd>
+        <dt>ElevenLabs</dt><dd>Official Python SDK</dd>
+        <dt>OpenAI</dt><dd>Official Python SDK</dd>
+        <dt>Language codes</dt><dd>BCP-47 (Sarvam) vs ISO-639-1 (others)</dd>
+        <dt>Key gotcha</dt><dd>MIME type override for .m4a files</dd>
+      </dl>
+    `
+  },
+  {
+    title: "Evaluation Runner",
+    file: "src/run_eval.py",
+    pipelineLabel: "Runner",
+    content: () => `
+      ${c(`
+      <div class="concept">
+        <h4>The control center: load answers, run tests, record scores</h4>
+        <p>Think of this as a teacher grading exams. The "answer key" is the ground truth (what was actually said in each audio file). The "students" are the 3 ASR providers. The runner sends each audio file to each provider, compares the transcript against the answer key, and records the score.</p>
+        <p><strong>28 audio files x 3 providers = 84 API calls</strong> per full evaluation run. Each result includes WER, CER, latency, and the raw reference/hypothesis text for debugging.</p>
+      </div>
+
+      <div class="concept">
+        <h4>Two sources of ground truth, and why both matter</h4>
+        <p>The "answer key" comes from two JSON files. <strong>Public datasets</strong> (14 IndicVoices + 7 Svarah files) provide diverse speakers and accents but cover general topics like cooking and sports. <strong>Personal recordings</strong> (7 files I recorded myself) are the only banking-specific test data. Combining them lets you compare "general Indic speech" performance vs "domain-specific code-mixed" performance.</p>
+        <p>This split matters. A model that scores 10% WER on general Hindi might score 30% on Hinglish banking calls. You'd never know without both data sources.</p>
+      </div>
+      `)}
+
+      <div class="diagram"><span class="hl">Evaluation Flow</span>
+
+  <span class="c">Ground Truth JSON</span> (28 entries with audio paths + reference text)
+       |
+  <span class="kw">for</span> each audio file:
+  |   <span class="kw">for</span> each provider (Sarvam, ElevenLabs, OpenAI):
+  |       |
+  |       +-- <span class="g">Call transcribe()</span> via provider wrapper
+  |       +-- <span class="o">Compute WER</span> (reference vs hypothesis)
+  |       +-- <span class="o">Compute CER</span> (reference vs hypothesis)
+  |       +-- <span class="p">Record latency</span>
+  |       +-- <span class="hl">Append to results[]</span>
+       |
+  <span class="g">Save to CSV + JSON</span> (one row per audio-provider pair)</div>
+
+      ${d(`
+      <div class="code-block">
+        <div class="code-header"><span>src/run_eval.py</span><span class="lines">Main evaluation loop</span></div>
+        <pre><span class="kw">def</span> <span class="fn">run_evaluation</span>(entries, providers, limit):
+    results = []
+    <span class="kw">for</span> entry <span class="kw">in</span> entries:
+        audio_path = entry[<span class="str">"audio_path"</span>]
+        reference = entry[<span class="str">"text"</span>]        <span class="cmt"># ground truth transcription</span>
+
+        <span class="kw">for</span> provider_name <span class="kw">in</span> providers:
+            result = <span class="fn">transcribe_single</span>(provider_name, audio_path, language)
+
+            <span class="kw">if</span> result[<span class="str">"status"</span>] == <span class="str">"ok"</span>:
+<span class="hl">                wer_result = <span class="fn">compute_wer</span>(reference, result[<span class="str">"transcript"</span>])
+                cer_result = <span class="fn">compute_cer</span>(reference, result[<span class="str">"transcript"</span>])</span>
+
+            results.append({...})
+    <span class="kw">return</span> results</pre>
+      </div>
+
+      <div class="callout decision">
+        <div class="callout-title">Design decision</div>
+        Results include the raw reference and hypothesis text alongside the scores. This turned out to be critical for debugging. When Sarvam returned 27% WER on Kannada, I could eyeball the actual transcripts and see the errors were minor character differences, not complete failures.
+      </div>
+      `)}
+
+      <dl class="kv-grid">
+        <dt>Input</dt><dd>28 audio files + ground truth JSON</dd>
+        <dt>Output</dt><dd>CSV + JSON with 84 rows (28 x 3)</dd>
+        <dt>Per result</dt><dd>WER, CER, latency, reference, hypothesis</dd>
+        <dt>Ground truth</dt><dd>dataset_ground_truth.json + personal_template.json</dd>
+        <dt>CLI</dt><dd>python src/run_eval.py --limit 5</dd>
+      </dl>
+    `
+  },
+  {
+    title: "Metrics Engine",
+    file: "src/metrics/wer.py, cer.py",
+    pipelineLabel: "Metrics",
+    content: () => `
+      ${c(`
+      <div class="concept">
+        <h4>How do you score a transcript?</h4>
+        <p><strong>WER (Word Error Rate)</strong> counts how many words the model got wrong. It compares the transcript word-by-word against what was actually said and counts three types of mistakes: substitutions (wrong word), deletions (missed word), and insertions (extra word). Lower is better.</p>
+        <p><strong>CER (Character Error Rate)</strong> does the same thing but at the character level. This matters a lot for Indic languages. In Kannada, a single wrong vowel sign makes the entire word "wrong" in WER. CER catches that the error is actually tiny.</p>
+        <p><strong>Real example from this evaluation:</strong> Kannada transcription scored 27% WER but only 13% CER. WER alone would make you think the model is bad. CER tells you the errors are minor character differences, not complete word failures. That distinction changes the product decision.</p>
+      </div>
+
+      <div class="concept">
+        <h4>The one thing that makes this work: normalize before you compare</h4>
+        <p>Both WER and CER delegate the actual math to <a href="https://github.com/jitsi/jiwer" style="color:var(--cyan)">jiwer</a>, an open-source library built for ASR evaluation. But there's one critical step our wrappers add: <strong>text normalization before comparison</strong>. Without it, a difference in punctuation or Unicode encoding inflates the error rate even though the transcription is correct. More on this in the next stage.</p>
+      </div>
+      `)}
+
+      <div class="diagram"><span class="hl">Scoring a Single Transcript</span>
+
+  <span class="c">Reference</span>:  "मैंने क्रेडिट कार्ड की जांच करवाई थी"  (ground truth)
+  <span class="p">Hypothesis</span>: "मैने क्रेडिट कार्ड कि जाच करवाई थी"   (what ASR produced)
+       |
+  <span class="o">normalize_text()</span> on both    <-- critical step
+       |
+  <span class="g">jiwer.process_words()</span>  -->  WER = 28.6% (2 words differ out of 7)
+  <span class="g">jiwer.process_chars()</span>  -->  CER = 7.1%  (only 3 characters differ)
+       |
+  <span class="hl">CER tells the real story: this is a close transcription, not a failure.</span></div>
+
+      ${d(`
+      <div class="code-block">
+        <div class="code-header"><span>src/metrics/wer.py</span><span class="lines">WER with normalization</span></div>
+        <pre><span class="kw">def</span> <span class="fn">compute_wer</span>(reference: <span class="ty">str</span>, hypothesis: <span class="ty">str</span>) -> <span class="ty">dict</span>:
+<span class="hl">    ref_norm = <span class="fn">normalize_text</span>(reference)
+    hyp_norm = <span class="fn">normalize_text</span>(hypothesis)</span>
+
+    output = jiwer.process_words(ref_norm, hyp_norm)
+
+    <span class="kw">return</span> {
+        <span class="str">"wer"</span>: <span class="fn">round</span>(output.wer, <span class="num">4</span>),
+        <span class="str">"substitutions"</span>: output.substitutions,
+        <span class="str">"deletions"</span>: output.deletions,
+        <span class="str">"insertions"</span>: output.insertions,
+    }</pre>
+      </div>
+      `)}
+
+      <dl class="kv-grid">
+        <dt>Library</dt><dd>jiwer (open-source, purpose-built for ASR)</dd>
+        <dt>WER</dt><dd>Word-level errors: substitutions + deletions + insertions</dd>
+        <dt>CER</dt><dd>Character-level errors (better for Indic languages)</dd>
+        <dt>Key insight</dt><dd>Always normalize text before comparison</dd>
+        <dt>Why CER matters</dt><dd>27% WER / 13% CER = minor errors, not failures</dd>
+      </dl>
+    `
+  },
+  {
+    title: "Text Normalization",
+    file: "src/metrics/normalize.py",
+    pipelineLabel: "Normalize",
+    content: () => `
+      ${c(`
+      <div class="concept">
+        <h4>The most critical module in the pipeline</h4>
+        <p>Before you can compare two texts, you need to make them "apples to apples." The same spoken word can be written differently depending on the transcriber. One writes "हज़ार" (with a nuqta dot), another writes "हजार" (without). Both are correct transcriptions of the same spoken word "hazaar" (thousand). But without normalization, WER treats them as completely different words.</p>
+        <p>This module runs a 6-step pipeline to strip away these superficial differences. <strong>Without it, WER is artificially inflated by ~50% on short texts with currency amounts.</strong></p>
+      </div>
+
+      <div class="concept">
+        <h4>The 6 steps, and why order matters</h4>
+        <p><strong>Step 1: Unicode NFC.</strong> Computers can encode the same character in multiple ways. NFC picks one canonical form. This must run first because later steps depend on consistent encoding.</p>
+        <p><strong>Step 2: Nuqta stripping.</strong> A nuqta (&#x093C;) is a dot under a Devanagari consonant for borrowed sounds. Different ASR models handle it differently. Stripping it treats both variants as the same word. This single step eliminated ~50% of false WER inflation on banking texts.</p>
+        <p><strong>Step 3: Chandrabindu/Anusvara.</strong> Two nasalization marks (&#x0901; and &#x0902;) that are used interchangeably in casual Hindi. Normalizing one to the other prevents false mismatches.</p>
+        <p><strong>Step 4: Punctuation stripping</strong> across three scripts (Latin, Devanagari, Kannada). Each script has its own punctuation characters.</p>
+        <p><strong>Step 5: Lowercase.</strong> Runs after script normalization to avoid interfering with Devanagari (which has no concept of case).</p>
+        <p><strong>Step 6: Whitespace collapse.</strong> Runs last to clean up gaps left by the earlier steps.</p>
+      </div>
+      `)}
+
+      <div class="diagram"><span class="hl">Normalization Pipeline (order matters)</span>
+
+  <span class="c">Raw text</span>: "हज़ार रुपये, का transaction!"
+       |
+  1. <span class="g">NFC normalize</span>         canonical Unicode form
+  2. <span class="o">Strip nuqta</span>           ज़ --> ज  (biggest single impact)
+  3. <span class="o">Chandrabindu</span>          ँ --> ं
+  4. <span class="r">Strip punctuation</span>     across Latin + Devanagari + Kannada
+  5. <span class="p">Lowercase</span>              only affects Latin characters
+  6. <span class="g">Collapse whitespace</span>   clean up gaps
+       |
+  <span class="hl">Result</span>: "हजार रुपये का transaction"</div>
+
+      ${d(`
+      <div class="code-block">
+        <div class="code-header"><span>src/metrics/normalize.py</span><span class="lines">The pipeline</span></div>
+        <pre><span class="kw">def</span> <span class="fn">normalize_text</span>(text: <span class="ty">str</span>) -> <span class="ty">str</span>:
+    text = <span class="fn">unicode_normalize</span>(text)              <span class="cmt"># 1. NFC normalization</span>
+    text = <span class="fn">normalize_devanagari_variants</span>(text)   <span class="cmt"># 2. Nuqta + chandrabindu</span>
+    text = <span class="fn">strip_punctuation</span>(text)               <span class="cmt"># 3. Latin + Devanagari + Kannada</span>
+    text = <span class="fn">normalize_numbers</span>(text)               <span class="cmt"># 4. Comma stripping, rupee symbol</span>
+    text = text.lower()                          <span class="cmt"># 5. Case folding</span>
+    text = <span class="fn">collapse_whitespace</span>(text)             <span class="cmt"># 6. Multiple spaces to one</span>
+    <span class="kw">return</span> text.strip()</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span>src/metrics/normalize.py</span><span class="lines">Nuqta stripping</span></div>
+        <pre><span class="kw">def</span> <span class="fn">normalize_devanagari_variants</span>(text: <span class="ty">str</span>) -> <span class="ty">str</span>:
+    <span class="cmt"># Strip nuqta (U+093C): क़-->क, ज़-->ज, फ़-->फ, etc.</span>
+<span class="hl">    text = text.replace(<span class="str">"\\u093C"</span>, <span class="str">""</span>)</span>
+    <span class="cmt"># Chandrabindu to Anusvara (common transcription variation)</span>
+    text = text.replace(<span class="str">"\\u0901"</span>, <span class="str">"\\u0902"</span>)
+    <span class="kw">return</span> text</pre>
+      </div>
+
+      <div class="callout bug">
+        <div class="callout-title">What breaks without nuqta stripping</div>
+        The word हज़ार ("hazaar", thousand) and हजार ("hajaar") are treated as completely different words without this step. On short texts with currency amounts like "Rs 18,500", this inflated WER by ~50%. Both are valid transcriptions of the same spoken word.
+      </div>
+      `)}
+
+      <dl class="kv-grid">
+        <dt>Steps</dt><dd>6 (NFC, nuqta, chandrabindu, punctuation, lowercase, whitespace)</dd>
+        <dt>Scripts covered</dt><dd>Latin, Devanagari, Kannada</dd>
+        <dt>Biggest impact</dt><dd>Nuqta stripping (~50% false WER reduction on banking texts)</dd>
+        <dt>Order matters</dt><dd>NFC first, whitespace last</dd>
+        <dt>Why</dt><dd>Without this, you're measuring Unicode differences, not ASR quality</dd>
+      </dl>
+    `
+  },
+  {
+    title: "Script Normalization",
+    file: "src/metrics/script_normalize.py",
+    pipelineLabel: "Script Norm",
+    content: () => `
+      ${c(`
+      <div class="concept">
+        <h4>The single most important discovery in this project</h4>
+        <p>When someone says "credit card" in a Hindi sentence, one ASR model writes it in English letters (<code>credit card</code>) and another writes it in Devanagari (<code>क्रेडिट कार्ड</code>). They transcribed the exact same words. But WER treats them as completely different because the characters don't match.</p>
+        <p><strong>This inflated code-mixed WER by 40 percentage points.</strong> ElevenLabs scored 57% WER on Hinglish banking calls. After normalizing scripts: 17%. Without this correction, you'd wrongly conclude the model can't handle code-mixing. In reality, it was transcribing correctly, just in a different script.</p>
+        <p>I only found this by reading the actual transcripts side-by-side with the ground truth. The numbers alone would have led to the wrong conclusion.</p>
+      </div>
+
+      <div class="concept">
+        <h4>How the fix works</h4>
+        <p>The module builds a dictionary mapping common English banking terms to their Devanagari and Kannada equivalents. Before computing WER, it checks each word: is it Latin script? Is it in the dictionary? If both, it replaces the Latin word with the native script equivalent.</p>
+        <p>This only runs on code-mixed files (<code>hi-en</code> for Hinglish, <code>kn-en</code> for Kannada-English). Monolingual files don't have this problem.</p>
+      </div>
+      `)}
+
+      <div class="diagram"><span class="hl">Script Normalization: The 40pp Discovery</span>
+
+  <span class="r">Before normalization</span>:
+  Ground truth: "मैंने <span class="r">क्रेडिट कार्ड</span> की जांच करवाई"   (Devanagari)
+  ElevenLabs:   "मैंने <span class="r">credit card</span> की जांच करवाई"    (Latin)
+  WER: <span class="r">56.61%</span>   (2 words "wrong" because different script)
+
+  <span class="g">After normalization</span>:
+  Ground truth: "मैंने क्रेडिट कार्ड की जांच करवाई"
+  ElevenLabs:   "मैंने <span class="g">क्रेडिट कार्ड</span> की जांच करवाई"   (mapped to Devanagari)
+  WER: <span class="g">17.01%</span>   (actual transcription errors only)</div>
+
+      ${d(`
+      <div class="code-block">
+        <div class="code-header"><span>src/metrics/script_normalize.py</span><span class="lines">Latin to Devanagari mapping</span></div>
+        <pre><span class="cmt"># Derived from ground truth in personal_template.json</span>
+_LATIN_TO_DEVANAGARI = {
+    <span class="str">"credit"</span>: <span class="str">"क्रेडिट"</span>,
+    <span class="str">"card"</span>: <span class="str">"कार्ड"</span>,
+    <span class="str">"transaction"</span>: <span class="str">"ट्रांज़ैक्शन"</span>,
+    <span class="str">"payment"</span>: <span class="str">"पेमेंट"</span>,
+    <span class="str">"account"</span>: <span class="str">"अकाउंट"</span>,
+    <span class="str">"fraud"</span>: <span class="str">"फ्रॉड"</span>,
+    <span class="cmt"># ... 16 more banking terms</span>
+}</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span>src/metrics/script_normalize.py</span><span class="lines">The normalization logic</span></div>
+        <pre><span class="kw">def</span> <span class="fn">normalize_script</span>(text: <span class="ty">str</span>, language: <span class="ty">str</span>) -> <span class="ty">str</span>:
+    <span class="kw">if</span> language == <span class="str">"hi-en"</span>:
+        mapping = _LATIN_TO_DEVANAGARI
+    <span class="kw">elif</span> language == <span class="str">"kn-en"</span>:
+        mapping = _LATIN_TO_KANNADA
+    <span class="kw">else</span>:
+        <span class="kw">return</span> text  <span class="cmt"># No normalization for monolingual</span>
+
+    words = text.split()
+    normalized = []
+    <span class="kw">for</span> word <span class="kw">in</span> words:
+        clean = re.sub(<span class="str">r"[.,!?;:]"</span>, <span class="str">""</span>, word).lower()
+<span class="hl">        <span class="kw">if</span> <span class="fn">is_latin_word</span>(word) <span class="kw">and</span> clean <span class="kw">in</span> mapping:
+            normalized.append(mapping[clean])</span>
+        <span class="kw">else</span>:
+            normalized.append(word)
+
+    <span class="kw">return</span> <span class="str">" "</span>.join(normalized)</pre>
+      </div>
+
+      <div class="callout decision">
+        <div class="callout-title">Why is_latin_word() exists</div>
+        A word is only considered Latin if >50% of its characters are ASCII letters. This prevents false positives on Devanagari words that happen to contain a stray Latin character. Without this check, you'd accidentally normalize native script words and introduce new errors.
+      </div>
+      `)}
+
+      <dl class="kv-grid">
+        <dt>Impact</dt><dd>40pp WER reduction on code-mixed files</dd>
+        <dt>Raw WER</dt><dd>56.61% (before script normalization)</dd>
+        <dt>Corrected WER</dt><dd>17.01% (after)</dd>
+        <dt>Applied to</dt><dd>hi-en (Hinglish) and kn-en (Kannada-English) only</dd>
+        <dt>Maps</dt><dd>~22 banking terms per language pair</dd>
+        <dt>Key lesson</dt><dd>Always read actual transcripts, not just scores</dd>
+      </dl>
+    `
+  },
+  {
+    title: "Post-ASR Correction",
+    file: "src/correction/",
+    pipelineLabel: "Correction",
+    content: () => `
+      ${c(`
+      <div class="concept">
+        <h4>Can an LLM fix what the ASR model got wrong?</h4>
+        <p>The idea is simple: take the ASR transcript, pass it through GPT with a banking-specific system prompt, and let it fix obvious errors. "सरियल" (serial) becomes "क्रेडिट" (credit) because the LLM knows the context is banking.</p>
+        <p>Two approaches were tested. <strong>Full-transcript correction</strong> sends the entire transcript to the LLM. This is the only option for providers like Sarvam that don't provide per-word confidence scores. <strong>Targeted correction</strong> uses ElevenLabs' word-level confidence (logprob) scores to flag only the uncertain words, then asks the LLM to fix just those.</p>
+      </div>
+
+      <div class="concept">
+        <h4>The key finding: correction only helps weak models</h4>
+        <p>Whisper-1 (43% WER) improved by 15pp with LLM correction. That's meaningful. But Sarvam (15% WER) actually got <strong>worse</strong>. The LLM "corrected" dialectal variants to standard written forms, introducing new errors where there were none.</p>
+        <p>Upgrading from whisper-1 to gpt-4o-transcribe achieved the same 15pp improvement as building an entire LLM correction pipeline. Zero marginal cost. No added latency. No overcorrection risk.</p>
+        <p><strong>Bottom line:</strong> When the base model is strong, post-processing is unnecessary. When it's weak, upgrading the model is cheaper than building a correction pipeline.</p>
+      </div>
+
+      <div class="concept">
+        <h4>Why confidence-guided correction failed</h4>
+        <p>ElevenLabs provides per-word logprob (confidence) scores. The idea: only flag words where the model was uncertain, then ask the LLM to fix those specific words. In theory, this reduces overcorrection.</p>
+        <p>In practice, <strong>ElevenLabs logprobs are near-zero even at 50-115% WER on Indian languages</strong>. The confidence scores are not calibrated for Indic content. The system flagged fewer than 2 words per file. The LLM never saw the actual errors. Without the fallback to full-transcript correction, targeted mode was a no-op.</p>
+      </div>
+      `)}
+
+      <div class="diagram"><span class="hl">Correction Decision Tree</span>
+
+  <span class="c">ASR Transcript</span>
+       |
+  Does this provider give per-word confidence?
+       |
+  <span class="r">No</span> (Sarvam, OpenAI)        <span class="g">Yes</span> (ElevenLabs)
+       |                            |
+  <span class="o">Full-transcript</span>        Flag low-confidence words (logprob < -0.5)
+  correction via GPT            |
+                          Enough words flagged?
+                            |            |
+                          <span class="g">Yes</span>          <span class="r">No</span> (< 2 words)
+                            |            |
+                      <span class="p">Targeted</span>       <span class="o">Fallback to</span>
+                      correction     full-transcript
+                                     <span class="r">(this happens almost always for Indic)</span></div>
+
+      ${d(`
+      <div class="code-block">
+        <div class="code-header"><span>src/correction/llm_correction.py</span><span class="lines">Banking domain system prompt</span></div>
+        <pre>BANKING_SYSTEM_PROMPT = (
+    <span class="str">"You are correcting ASR transcription errors from Indian banking calls.\\n\\n"</span>
+    <span class="str">"RULES:\\n"</span>
+    <span class="str">"1. ONLY fix clear transcription errors.\\n"</span>
+    <span class="str">"2. NEVER standardize dialect to written form.\\n"</span>
+    <span class="str">"3. NEVER merge or split words across boundaries.\\n"</span>
+    <span class="str">"4. Preserve the original script (Devanagari, Kannada, Latin).\\n"</span>
+<span class="hl">    <span class="str">"5. If unsure, LEAVE IT UNCHANGED.\\n"</span></span>
+    <span class="str">"6. For code-mixed: English banking terms are strong signal.\\n"</span>
+    <span class="str">"7. Numbers, amounts: preserve the format used by the speaker.\\n\\n"</span>
+    <span class="str">"Banking vocabulary: खाता, ब्याज, किस्त, राशि, जमा, ..."</span>
+)</pre>
+      </div>
+
+      <div class="callout bug">
+        <div class="callout-title">The calibration problem</div>
+        ElevenLabs logprobs are near-zero across the board for Indic content. A word with logprob -0.01 might still be completely wrong. The confidence scores were likely trained on English data and don't transfer to Hindi or Kannada. This is a known limitation of multilingual ASR confidence estimation.
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span>src/correction/confidence_guided.py</span><span class="lines">Targeted correction with fallback</span></div>
+        <pre><span class="cmt"># Flag low-confidence words</span>
+flagged = <span class="fn">flag_low_confidence_words</span>(words, threshold=<span class="num">-0.5</span>)
+
+<span class="cmt"># Choose correction strategy</span>
+<span class="kw">if</span> <span class="fn">len</span>(flagged) >= MIN_FLAGGED_FOR_TARGETED:
+    <span class="cmt"># Enough flagged words: targeted correction</span>
+    correction = <span class="fn">correct_flagged_words</span>(transcript, flagged, words)
+<span class="kw">else</span>:
+<span class="hl">    <span class="cmt"># Too few flagged: fallback to full-transcript</span>
+    correction = <span class="fn">correct_full_transcript</span>(transcript)</span></pre>
+      </div>
+      `)}
+
+      <dl class="kv-grid">
+        <dt>LLM</dt><dd>GPT (banking domain system prompt)</dd>
+        <dt>Two modes</dt><dd>Full-transcript + targeted (confidence-guided)</dd>
+        <dt>Helps weak models</dt><dd>whisper-1: 43% to 28% WER (-15pp)</dd>
+        <dt>Hurts strong models</dt><dd>Sarvam: 15% to 18% WER (+3pp overcorrection)</dd>
+        <dt>Calibration issue</dt><dd>ElevenLabs logprobs not calibrated for Indic</dd>
+        <dt>Key lesson</dt><dd>Upgrade the model, don't build post-processing</dd>
+      </dl>
+    `
+  }
+];
+
+// Render functions
+function renderNav() {
+  document.getElementById('navList').innerHTML = steps.map((s, i) => `
+    <div class="nav-item ${i === currentStep ? 'active' : ''} ${visited.has(i) && i !== currentStep ? 'visited' : ''}" onclick="goToStep(${i})">
+      <div class="nav-num">${visited.has(i) && i !== currentStep ? '&#10003;' : i + 1}</div>
+      <div class="nav-label">
+        <div class="title">${s.title}</div>
+        <div class="file">${s.file}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPipeline() {
+  document.getElementById('pipelineBar').innerHTML = steps.map((s, i) => {
+    const cls = i === currentStep ? 'active' : visited.has(i) ? 'visited' : 'idle';
+    const aCls = i < currentStep ? 'visited' : i === currentStep ? 'active' : '';
+    return `<div class="pipeline-step" onclick="goToStep(${i})"><div class="pipeline-node ${cls}">${s.pipelineLabel}</div></div>${i < steps.length - 1 ? `<span class="pipeline-arrow ${aCls}">&rarr;</span>` : ''}`;
+  }).join('');
+}
+
+function renderContent() {
+  const s = steps[currentStep];
+  document.getElementById('content').innerHTML = `
+    <div class="step-content">
+      <div class="step-badge"><span class="snum">${currentStep + 1}</span> Stage ${currentStep + 1} of ${steps.length}</div>
+      <h2 class="step-title">${s.title}</h2>
+      <span class="step-file">${s.file}</span>
+      ${s.content()}
+      ${currentStep < steps.length - 1 ? `<div class="next-step" onclick="nextStep()">Continue to Stage ${currentStep + 2}: ${steps[currentStep + 1].title} &rarr;</div>` : `<div class="next-step" onclick="goToStep(0)" style="border-color:var(--green);color:var(--green);background:rgba(63,185,80,0.1)">&#10003; Walkthrough complete. View the full source on <a href="https://github.com/R-eehan/asr-evaluation-exploration" style="color:var(--green)">GitHub</a>.</div>`}
+    </div>
+  `;
+  document.getElementById('content').scrollTop = 0;
+}
+
+function updateButtons() {
+  document.getElementById('prevBtn').disabled = currentStep === 0;
+  document.getElementById('nextBtn').disabled = currentStep === steps.length - 1;
+}
+
+function goToStep(i) { currentStep = i; visited.add(i); renderNav(); renderPipeline(); renderContent(); updateButtons(); }
+function nextStep() { if (currentStep < steps.length - 1) goToStep(currentStep + 1); }
+function prevStep() { if (currentStep > 0) goToStep(currentStep - 1); }
+
+function setMode(mode) {
+  viewMode = mode;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('toggle' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+  renderContent();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nextStep(); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prevStep(); }
+  if (e.key >= '1' && e.key <= '6') { e.preventDefault(); goToStep(parseInt(e.key) - 1); }
+});
+
+goToStep(0);
+</script>
+</body>
+</html>

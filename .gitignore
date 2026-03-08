@@ -1,12 +1,6 @@
 # Environment
 .env
 
-# Audio data (too large for git)
-data/audio/
-
-# API results (regenerable)
-data/results/
-
 # Python
 __pycache__/
 *.pyc

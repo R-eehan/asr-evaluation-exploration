@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Evaluating Voice AI for Indian Banking</title>
+<meta name="description" content="An independent product evaluation of three ASR providers against enterprise Indian banking use cases. 28 audio files, 5 languages, 3 providers."/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        "primary": "#0D9488",
+        "accent": "#2DD4BF",
+        "cream": "#F8F5F0",
+        "cream-dark": "#F0EDE7",
+      },
+      fontFamily: {
+        "display": ["Newsreader", "Georgia", "Times New Roman", "serif"],
+        "body": ["DM Sans", "system-ui", "-apple-system", "sans-serif"],
+        "mono": ["JetBrains Mono", "SF Mono", "Menlo", "monospace"],
+      },
+    },
+  },
+}
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: #F8F5F0; }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #a1a1aa44; border-radius: 3px; }
+
+  ::selection { background: #2dd4bf33; }
+
+  /* Section reveal */
+  .section-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .section-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .section-card {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    html { scroll-behavior: auto; }
+  }
+
+  #scroll-bar { transition: width 0.1s linear; }
+
+  /* Focus states */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid #0D9488;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Tables */
+  table { border-collapse: collapse; width: 100%; }
+  th {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #52525b;
+    padding: 7px 10px;
+    border-bottom: 2px solid #d4d4d8;
+  }
+  td {
+    padding: 7px 10px;
+    font-size: 14px;
+    color: #27272a;
+    border-bottom: 1px solid #e4e4e7;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.best { color: #0D9488; font-weight: 600; }
+
+  .chart-img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #d4d4d8;
+  }
+
+  /* Table of Contents */
+  .toc-link {
+    position: relative;
+    padding-left: 12px;
+    border-left: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .toc-link.active {
+    color: #0D9488;
+    border-left-color: #0D9488;
+  }
+
+  .insight-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: #0f766e;
+  }
+</style>
+</head>
+
+<body class="text-zinc-800 antialiased">
+
+<!-- Header -->
+<header class="sticky top-0 z-50 border-b border-zinc-300/50 bg-[#F8F5F0]/92 backdrop-blur-md">
+  <div id="scroll-bar" class="h-[2px] bg-primary" style="width:0%"></div>
+  <div class="max-w-3xl mx-auto px-5 py-3 flex items-center justify-between">
+    <span class="font-display text-[15px] font-semibold tracking-tight text-zinc-900">Evaluating Voice AI for Indian Banking</span>
+    <nav class="hidden md:flex items-center gap-0.5" aria-label="Page sections">
+      <a href="#findings" class="px-3 py-2 rounded-md text-[11px] font-mono font-medium text-zinc-500 hover:text-primary hover:bg-primary/5 transition-colors">Findings</a>
+      <span class="text-zinc-300 text-[10px]" aria-hidden="true">/</span>
+      <a href="#methodology" class="px-3 py-2 rounded-md text-[11px] font-mono font-medium text-zinc-500 hover:text-primary hover:bg-primary/5 transition-colors">Methodology</a>
+      <span class="text-zinc-300 text-[10px]" aria-hidden="true">/</span>
+      <a href="#correction" class="px-3 py-2 rounded-md text-[11px] font-mono font-medium text-zinc-500 hover:text-primary hover:bg-primary/5 transition-colors">Correction</a>
+      <span class="text-zinc-300 text-[10px]" aria-hidden="true">/</span>
+      <a href="#priorities" class="px-3 py-2 rounded-md text-[11px] font-mono font-medium text-zinc-500 hover:text-primary hover:bg-primary/5 transition-colors">PM View</a>
+    </nav>
+    <a href="https://github.com/reehan-ahmed/asr-evaluation-exploration" target="_blank" rel="noopener" class="px-3 py-2 rounded-md text-[11px] font-mono font-medium text-zinc-500 hover:text-primary hover:bg-primary/5 transition-colors" aria-label="View source code on GitHub">GitHub</a>
+  </div>
+</header>
+
+<!-- Table of Contents (right sidebar, wide screens only) -->
+<aside class="hidden xl:block fixed z-40" style="top: 120px; left: calc(50% + 420px);" aria-label="Table of contents">
+  <nav class="space-y-1">
+    <p class="font-mono text-[9px] font-semibold uppercase tracking-[0.15em] text-zinc-400 mb-3">On this page</p>
+    <a href="#findings" class="toc-link block text-[12px] font-mono text-zinc-400 hover:text-primary py-1" data-toc="findings">Per-language accuracy</a>
+    <a href="#methodology" class="toc-link block text-[12px] font-mono text-zinc-400 hover:text-primary py-1" data-toc="methodology">Methodology matters</a>
+    <a href="#correction" class="toc-link block text-[12px] font-mono text-zinc-400 hover:text-primary py-1" data-toc="correction">Correction pipeline</a>
+    <a href="#priorities" class="toc-link block text-[12px] font-mono text-zinc-400 hover:text-primary py-1" data-toc="priorities">PM priorities</a>
+  </nav>
+</aside>
+
+<!-- Hero -->
+<section class="max-w-3xl mx-auto px-5 pt-8 pb-5 md:pt-12 md:pb-8">
+  <p class="font-mono text-[11px] font-medium uppercase tracking-[0.15em] text-primary mb-2">ASR Product Evaluation</p>
+  <h1 class="font-display text-3xl sm:text-4xl md:text-[38px] font-semibold tracking-tight text-zinc-900 leading-[1.15] mb-1">
+    Evaluating Voice AI for Indian Banking
+  </h1>
+  <p class="text-[13px] text-zinc-500 font-mono mb-5">Reehan Ahmed &middot; March 2026</p>
+
+  <div class="space-y-2.5 text-[15px] text-zinc-700 leading-[1.65] max-w-2xl">
+    <p>
+      This project is an attempt to evaluate ASR model providers against a real enterprise problem: <strong class="text-zinc-900">customer support using voice AI for Indian banking</strong>. The RBI Ombudsman received <a href="https://rbi.org.in/Scripts/AnnualReportPublications.aspx" class="text-primary font-medium hover:underline underline-offset-2">1.3 million escalated banking complaints in FY 2024-25</a>, up 68% in two years, and that's just the fraction of customers that escalate formally.
+    </p>
+    <p>
+      In India, customers naturally <strong class="text-zinc-900">code-mix</strong> (switch between different languages), making speech transcription a hard problem. In banking, getting "Rs 18,500" right matters more than transcribing every filler word.
+    </p>
+    <p>
+      A Voice AI system that can't handle this is solving the wrong problem. RBI's data localization mandate makes the choice of provider a compliance decision, not just a technical one.
+    </p>
+    <p>
+      I evaluated three speech-to-text providers: <strong class="text-zinc-900">Sarvam AI</strong> (saaras:v3), <strong class="text-zinc-900">ElevenLabs</strong> (scribe_v2), and <strong class="text-zinc-900">OpenAI</strong> (gpt-4o-transcribe). The test set: 28 audio files across 5 languages, including 7 code-mixed banking recordings I created.
+    </p>
+  </div>
+
+  <!-- Key stats -->
+  <div class="flex flex-wrap gap-2 mt-4">
+    <span class="insight-tag">3 providers</span>
+    <span class="insight-tag">28 audio files</span>
+    <span class="insight-tag">5 languages</span>
+    <span class="insight-tag">7 original recordings</span>
+  </div>
+
+  <div class="mt-3 p-3 rounded-lg bg-amber-50/80 border border-amber-300/50">
+    <p class="text-[13px] text-amber-900 leading-relaxed">
+      <strong>Caveat:</strong> These results are directional, not statistically significant (n=7 per language, n=3 for Kannada-English). Per-finding sample sizes are noted throughout.
+    </p>
+  </div>
+
+  <p class="mt-3 text-[15px] text-zinc-800 leading-[1.65] max-w-2xl">
+    <strong class="text-zinc-900">The takeaway: There is no single winner.</strong> Which provider is "best" to use for a Voice AI customer support product depends entirely on which metric you optimize for.
+  </p>
+</section>
+
+<main class="max-w-3xl mx-auto px-5 pb-12 space-y-6">
+
+<!-- Section 1: Per-language accuracy -->
+<section id="findings" class="section-card">
+  <div class="bg-white border border-zinc-200/80 rounded-xl shadow-sm overflow-hidden">
+    <div class="p-5 md:p-6">
+      <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-primary mb-2">Finding 01</p>
+      <h2 class="font-display text-xl md:text-2xl font-semibold tracking-tight text-zinc-900 mb-4">Per-language accuracy tells a nuanced story</h2>
+
+      <img src="report/figures/fig1_wer_by_language.png" alt="Bar chart comparing Word Error Rate across Hindi, Indian English, Kannada, Hinglish, and Kannada-English for Sarvam, ElevenLabs, and OpenAI" class="chart-img mb-4"/>
+
+      <div class="overflow-x-auto mb-4">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Language</th>
+              <th scope="col">n</th>
+              <th scope="col">Sarvam (saaras:v3)</th>
+              <th scope="col">ElevenLabs (scribe_v2)</th>
+              <th scope="col">OpenAI (gpt-4o-transcribe)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Hindi</td><td>7</td><td class="best">9.10%</td><td>14.47%</td><td>18.39%</td></tr>
+            <tr><td>Indian English</td><td>7</td><td class="best">4.07%</td><td>9.06%</td><td>13.39%</td></tr>
+            <tr><td>Kannada</td><td>7</td><td class="best">27.31%</td><td>48.78%</td><td>58.37%</td></tr>
+            <tr><td>Hinglish (code-mixed)</td><td>4</td><td>14.58%</td><td>41.78%</td><td class="best">9.05%</td></tr>
+            <tr><td>Kannada-English</td><td>3</td><td class="best">27.38%</td><td>76.39%</td><td>35.87%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="space-y-2 text-[15px] text-zinc-700 leading-[1.6]">
+        <p><strong class="text-zinc-900">1. Sarvam dominates monolingual Indian languages.</strong> Unsurprising but Sarvam was the best on Hindi, English, Kannada, and Kannada-English. The Kannada gap is worth noting: Sarvam at 27% WER vs gpt-4o-transcribe at 58%.</p>
+        <p><strong class="text-zinc-900">2. gpt-4o-transcribe's Hinglish result was genuinely surprising.</strong> 9.05% WER on code-mixed Hindi-English, surpassing even Sarvam (14.58%).</p>
+        <p><strong class="text-zinc-900">3. ElevenLabs' code-mixed numbers look terrible.</strong> But the raw WER is <strong class="text-zinc-900">misleading</strong>. This leads to the most important methodological discovery in the project.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 2: Evaluation methodology -->
+<section id="methodology" class="section-card">
+  <div class="bg-white border border-zinc-200/80 rounded-xl shadow-sm overflow-hidden">
+    <div class="p-5 md:p-6">
+      <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-primary mb-2">Finding 02</p>
+      <h2 class="font-display text-xl md:text-2xl font-semibold tracking-tight text-zinc-900 mb-4">Evaluation methodology matters as much as model quality</h2>
+
+      <div class="space-y-2.5 text-[15px] text-zinc-700 leading-[1.6] mb-4">
+        <p>
+          ElevenLabs' scribe_v2 outputs English loanwords in <strong class="text-zinc-900">Latin script</strong> ("credit card") while the ground truth I was running evaluation against uses native script ("<span class="font-mono text-[13px]">&#x0915;&#x094D;&#x0930;&#x0947;&#x0921;&#x093F;&#x091F; &#x0915;&#x093E;&#x0930;&#x094D;&#x0921;</span>"). Standard WER computation treats these as <strong class="text-zinc-900">completely different words</strong>, inflating ElevenLabs' code-mixed WER by <strong class="text-zinc-900">30-50 percentage points</strong> depending on the language.
+        </p>
+        <p>
+          I also identified that <strong class="text-zinc-900">relying only on WER and CER</strong> for the banking use case would not be a true test. Banking domain entity accuracy is also an <strong class="text-zinc-900">important metric</strong> to measure.
+        </p>
+        <p>
+          For a true comparison, I decided to perform script normalization, add entity accuracy comparisons &amp; run the evaluation again for code-mixed scenarios (Hinglish &amp; Kannada-English) specifically.
+        </p>
+      </div>
+
+      <img src="report/figures/fig2_script_normalization.png" alt="Dual panel chart showing raw vs script-normalized WER and banking entity accuracy across all three providers" class="chart-img mb-4"/>
+
+      <!-- Hinglish table -->
+      <h3 class="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-zinc-600 mb-2">Hinglish (n=4)</h3>
+      <div class="overflow-x-auto mb-2">
+        <table>
+          <thead><tr><th scope="col">Provider</th><th scope="col">Raw WER</th><th scope="col">Script-Normalized WER</th></tr></thead>
+          <tbody>
+            <tr><td>OpenAI (gpt-4o-transcribe)</td><td>9.05%</td><td class="best">7.92%</td></tr>
+            <tr><td>ElevenLabs (scribe_v2)</td><td>41.78%</td><td>11.17%</td></tr>
+            <tr><td>Sarvam (saaras:v3)</td><td>14.58%</td><td>14.58%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-[14px] text-zinc-600 mb-4">On Hinglish, OpenAI's gpt-4o-transcribe continued to reign supreme post script normalization.</p>
+
+      <!-- Kannada-English table -->
+      <h3 class="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-zinc-600 mb-2">Kannada-English (n=3)</h3>
+      <div class="overflow-x-auto mb-2">
+        <table>
+          <thead><tr><th scope="col">Provider</th><th scope="col">Raw WER</th><th scope="col">Script-Normalized WER</th></tr></thead>
+          <tbody>
+            <tr><td>ElevenLabs (scribe_v2)</td><td>76.39%</td><td class="best">24.79%</td></tr>
+            <tr><td>Sarvam (saaras:v3)</td><td>27.38%</td><td>27.38%</td></tr>
+            <tr><td>OpenAI (gpt-4o-transcribe)</td><td>35.87%</td><td>35.87%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-[14px] text-zinc-600 mb-4">On Kannada-English, ElevenLabs <strong class="text-zinc-800">became competitive</strong> with Sarvam (24.79% vs 27.38%) whereas it started from a much worse baseline.</p>
+
+      <!-- Entity accuracy -->
+      <div class="bg-[#F8F5F0] rounded-lg border border-zinc-200/80 p-4 mb-4">
+        <h3 class="font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-primary mb-2">The cleaner signal: Entity accuracy</h3>
+        <p class="text-[14px] text-zinc-600 mb-3">Across all 7 code-mixed recordings (41 banking entities: amounts, card types, transaction terms, city names):</p>
+        <div class="overflow-x-auto">
+          <table>
+            <thead><tr><th scope="col">Provider</th><th scope="col">Entity Accuracy</th></tr></thead>
+            <tbody>
+              <tr><td>ElevenLabs (scribe_v2)</td><td class="best">41/41 (100%)</td></tr>
+              <tr><td>Sarvam (saaras:v3)</td><td>40/41 (97.6%)</td></tr>
+              <tr><td>OpenAI (gpt-4o-transcribe)</td><td>34/41 (82.9%)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="text-[15px] text-zinc-700 leading-[1.7] mb-2">
+        Entity accuracy does not depend on script format and it directly measures what banking deployments care about: did the model get "Rs 18,500" and "credit card" right?
+      </p>
+
+      <blockquote class="font-display italic text-[16px] text-primary border-l-[3px] border-primary/30 pl-4 mt-3">
+        A 40pp WER difference between providers can disappear with proper normalization. How you measure matters as much as what you measure. For banking, entity accuracy is the metric that actually maps to business outcomes.
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- Section 3: Correction -->
+<section id="correction" class="section-card">
+  <div class="bg-white border border-zinc-200/80 rounded-xl shadow-sm overflow-hidden">
+    <div class="p-5 md:p-6">
+      <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-primary mb-2">Finding 03</p>
+      <h2 class="font-display text-xl md:text-2xl font-semibold tracking-tight text-zinc-900 mb-4">When the numbers are bad, what can you actually do?</h2>
+
+      <div class="space-y-2.5 text-[15px] text-zinc-700 leading-[1.6] mb-4">
+        <p>
+          I started this evaluation using <strong class="text-zinc-900">older model versions</strong> (saarika:v2.5, scribe_v1, whisper-1). The initial results on code-mixed content were rough. As a PM, the follow up question was immediate: <em class="text-zinc-900">"when transcription quality is poor, what levers do I have for improvement?"</em>
+        </p>
+        <p>
+          ASR models are black boxes. Audio goes in, text comes out. No "system prompt" to iterate on. Brainstorming with Claude Code revealed that a <em>post-ASR correction pipeline</em> that leverages an LLM with a banking domain prompt is my best bet.
+        </p>
+        <p>
+          <strong class="text-zinc-900">It worked.</strong> OpenAI's older model dropped 15pp in WER. ElevenLabs improved by 5pp.
+        </p>
+        <p>
+          Then I discovered all three providers <strong class="text-zinc-900">had already shipped newer models</strong>. I ran the same evaluation and the same correction pipeline on the latest versions.
+        </p>
+      </div>
+
+      <img src="report/figures/fig3_correction_matrix.png" alt="Scatter plot showing the 2x2 correction matrix: base model WER on X-axis, correction delta on Y-axis, with legacy and latest models plotted for each provider" class="chart-img mb-4"/>
+
+      <div class="space-y-2.5 text-[15px] text-zinc-700 leading-[1.6]">
+        <p>
+          The correction pipeline <strong class="text-zinc-900">was now redundant</strong>. The model upgrades had already achieved what the entire correction pipeline was doing, <strong class="text-zinc-900">at zero cost</strong>.
+        </p>
+        <p>
+          Sarvam was <strong class="text-zinc-900">barely correctable in either generation (+0.9%)</strong>. Its remaining errors were too subtle for an LLM to improve without overcorrecting.
+        </p>
+      </div>
+
+      <blockquote class="font-display italic text-[16px] text-primary border-l-[3px] border-primary/30 pl-4 mt-3">
+        Correction pipelines have a shelf life measured in model generations. Invest in base model quality whenever feasible. Post-processing pipelines are typically short term band-aids.
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- Section 4: PM Priorities -->
+<section id="priorities" class="section-card">
+  <div class="bg-white border border-zinc-200/80 rounded-xl shadow-sm overflow-hidden">
+    <div class="p-5 md:p-6">
+      <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-primary mb-2">PM View</p>
+      <h2 class="font-display text-xl md:text-2xl font-semibold tracking-tight text-zinc-900 mb-4">If I were PM at Sarvam: three priorities</h2>
+
+      <div class="space-y-4">
+        <!-- Priority 1 -->
+        <div class="flex gap-3">
+          <div class="shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+            <span class="font-mono text-[13px] font-bold text-primary">1</span>
+          </div>
+          <div>
+            <h3 class="text-[15px] font-semibold text-zinc-900 mb-1.5">Explore/ship per-word confidence scores</h3>
+            <p class="text-[14px] text-zinc-600 leading-[1.6]">
+              Not for accuracy. Sarvam's Indian language accuracy is already strong enough that correction pipelines add no value. The real value hypothesis is <strong class="text-zinc-800">enterprise observability</strong>: banks need to know which transcriptions to flag for human review. No provider offers well-calibrated confidence for Indian languages today. This is a gap worth owning.
+            </p>
+          </div>
+        </div>
+
+        <!-- Priority 2 -->
+        <div class="flex gap-3">
+          <div class="shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+            <span class="font-mono text-[13px] font-bold text-primary">2</span>
+          </div>
+          <div>
+            <h3 class="text-[15px] font-semibold text-zinc-900 mb-1.5">Investigate &amp; close the Kannada gap</h3>
+            <p class="text-[14px] text-zinc-600 leading-[1.6]">
+              Current WER is 27%, which is 3x worse than Hindi at 9%. The CER-to-WER ratio (13% CER vs 27% WER) suggests the model is close on phonetics but struggles with word boundaries. That seems to be a tractable problem.
+            </p>
+          </div>
+        </div>
+
+        <!-- Priority 3 -->
+        <div class="flex gap-3">
+          <div class="shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+            <span class="font-mono text-[13px] font-bold text-primary">3</span>
+          </div>
+          <div>
+            <h3 class="text-[15px] font-semibold text-zinc-900 mb-1.5">Language-routed correction using Sarvam's own LLMs</h3>
+            <p class="text-[14px] text-zinc-600 leading-[1.6]">
+              Apply lightweight correction on code-mixed content (where English banking terms provide strong signal) but pass through pure Indic output unchanged. Sarvam's open-source 30B/105B models could power this at zero marginal LLM cost. Competitive differentiator.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-zinc-300/50 py-5 px-5">
+  <div class="max-w-3xl mx-auto flex items-center justify-between">
+    <span class="font-mono text-[10px] text-zinc-500 uppercase tracking-widest">2026</span>
+    <div class="flex items-center gap-4">
+      <a href="code-walkthrough.html" class="font-mono text-[11px] text-zinc-500 hover:text-primary transition-colors">Code Walkthrough</a>
+      <span class="text-zinc-300 text-[10px]" aria-hidden="true">/</span>
+      <a href="https://github.com/reehan-ahmed/asr-evaluation-exploration" target="_blank" rel="noopener" class="font-mono text-[11px] text-zinc-500 hover:text-primary transition-colors">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<!-- JavaScript -->
+<script>
+/* Scroll progress */
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+  document.getElementById('scroll-bar').style.width = Math.min(pct, 100) + '%';
+}, { passive: true });
+
+/* Intersection observer for card reveal */
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (!prefersReducedMotion) {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.section-card').forEach(el => obs.observe(el));
+} else {
+  document.querySelectorAll('.section-card').forEach(el => el.classList.add('visible'));
+}
+
+/* ToC active section tracking */
+const tocLinks = document.querySelectorAll('.toc-link');
+const sections = document.querySelectorAll('section[id]');
+
+const tocObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      tocLinks.forEach(link => link.classList.remove('active'));
+      const active = document.querySelector(`.toc-link[data-toc="${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -60% 0px' });
+
+sections.forEach(s => tocObs.observe(s));
+</script>
+</body>
+</html>

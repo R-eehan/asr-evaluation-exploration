@@ -12,14 +12,20 @@ from openai import OpenAI
 
 from src.config import FIREWORKS_API_KEY
 
-_client = None
+# Different models require different endpoints on Fireworks
+_BASE_URLS = {
+    "whisper-v3": "https://audio-prod.api.fireworks.ai/v1",
+    "whisper-v3-turbo": "https://audio-turbo.api.fireworks.ai/v1",
+}
+
+_clients = {}
 
 
-def _get_client() -> OpenAI:
-    global _client
-    if _client is None:
-        _client = OpenAI(api_key=FIREWORKS_API_KEY, base_url="https://audio-prod.api.fireworks.ai/v1")
-    return _client
+def _get_client(model: str) -> OpenAI:
+    if model not in _clients:
+        base_url = _BASE_URLS.get(model, _BASE_URLS["whisper-v3"])
+        _clients[model] = OpenAI(api_key=FIREWORKS_API_KEY, base_url=base_url)
+    return _clients[model]
 
 
 def transcribe(
@@ -37,7 +43,7 @@ def transcribe(
     Returns:
         dict with keys: provider, model, transcript, language_code, latency_seconds, raw_response
     """
-    client = _get_client()
+    client = _get_client(model)
 
     with open(audio_path, "rb") as f:
         kwargs = {

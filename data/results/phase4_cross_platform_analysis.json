@@ -1,0 +1,1420 @@
+{
+  "description": "Phase 4 cross-platform analysis results",
+  "source_csv": "data/results/eval_results_cross_platform_v1_20260315_204739.csv",
+  "providers": [
+    "together_ai",
+    "groq",
+    "fireworks",
+    "baseten"
+  ],
+  "script_normalization": [
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "together_ai",
+      "original_wer": 0.5455,
+      "normalized_wer": 0.1364,
+      "delta": -0.4091
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "groq",
+      "original_wer": 0.5455,
+      "normalized_wer": 0.1364,
+      "delta": -0.4091
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "fireworks",
+      "original_wer": 0.5455,
+      "normalized_wer": 0.1364,
+      "delta": -0.4091
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "baseten",
+      "original_wer": 0.5455,
+      "normalized_wer": 0.1364,
+      "delta": -0.4091
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "together_ai",
+      "original_wer": 0.1667,
+      "normalized_wer": 0.1667,
+      "delta": 0.0
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "groq",
+      "original_wer": 0.25,
+      "normalized_wer": 0.0833,
+      "delta": -0.16670000000000001
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "fireworks",
+      "original_wer": 0.3333,
+      "normalized_wer": 0.1667,
+      "delta": -0.1666
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "baseten",
+      "original_wer": 0.25,
+      "normalized_wer": 0.0833,
+      "delta": -0.16670000000000001
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "together_ai",
+      "original_wer": 0.3448,
+      "normalized_wer": 0.3448,
+      "delta": 0.0
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "groq",
+      "original_wer": 0.2414,
+      "normalized_wer": 0.2414,
+      "delta": 0.0
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "fireworks",
+      "original_wer": 0.4138,
+      "normalized_wer": 0.1379,
+      "delta": -0.27590000000000003
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "baseten",
+      "original_wer": 0.4138,
+      "normalized_wer": 0.1379,
+      "delta": -0.27590000000000003
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "together_ai",
+      "original_wer": 0.2857,
+      "normalized_wer": 0.0,
+      "delta": -0.2857
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "groq",
+      "original_wer": 0.3333,
+      "normalized_wer": 0.0476,
+      "delta": -0.28569999999999995
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "fireworks",
+      "original_wer": 0.2857,
+      "normalized_wer": 0.0,
+      "delta": -0.2857
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "language": "hi-en",
+      "provider": "baseten",
+      "original_wer": 0.2857,
+      "normalized_wer": 0.0,
+      "delta": -0.2857
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "together_ai",
+      "original_wer": 0.8095,
+      "normalized_wer": 0.8095,
+      "delta": 0.0
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "groq",
+      "original_wer": 0.7619,
+      "normalized_wer": 0.7619,
+      "delta": 0.0
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "fireworks",
+      "original_wer": 0.6667,
+      "normalized_wer": 0.6667,
+      "delta": 0.0
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "baseten",
+      "original_wer": 0.6667,
+      "normalized_wer": 0.6667,
+      "delta": 0.0
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "together_ai",
+      "original_wer": 0.75,
+      "normalized_wer": 0.75,
+      "delta": 0.0
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "groq",
+      "original_wer": 0.65,
+      "normalized_wer": 0.65,
+      "delta": 0.0
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "fireworks",
+      "original_wer": 0.65,
+      "normalized_wer": 0.65,
+      "delta": 0.0
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "baseten",
+      "original_wer": 0.65,
+      "normalized_wer": 0.65,
+      "delta": 0.0
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "together_ai",
+      "original_wer": 0.8649,
+      "normalized_wer": 0.8649,
+      "delta": 0.0
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "groq",
+      "original_wer": 0.8649,
+      "normalized_wer": 0.8649,
+      "delta": 0.0
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "fireworks",
+      "original_wer": 0.8649,
+      "normalized_wer": 0.8649,
+      "delta": 0.0
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "language": "kn-en",
+      "provider": "baseten",
+      "original_wer": 0.8649,
+      "normalized_wer": 0.8649,
+      "delta": 0.0
+    }
+  ],
+  "entity_accuracy": [
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "credit card",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "credit card",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "credit card",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "credit card",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "application",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "application",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "application",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "application",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "apply",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "apply",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "apply",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "apply",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "online",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "online",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "online",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "online",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "branch",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "branch",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "branch",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "entity": "branch",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "fraud",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "fraud",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "fraud",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "fraud",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "gpay",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "gpay",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "gpay",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "gpay",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "account",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "account",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "account",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "account",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "transfer",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "transfer",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "transfer",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "entity": "transfer",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "bank",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "bank",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "bank",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "bank",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "card",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "card",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "card",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "card",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "unusual",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "unusual",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "unusual",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "unusual",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "transaction",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "transaction",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "transaction",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "transaction",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "18500",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "18500",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "18500",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "18500",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "online payment",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "online payment",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "online payment",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "entity": "online payment",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "transaction",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "transaction",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "transaction",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "transaction",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "card",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "card",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "card",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "card",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "block",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "block",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "block",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "block",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "dispute",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "dispute",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "dispute",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "dispute",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "process",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "process",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "process",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "entity": "process",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "bank",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "bank",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "bank",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "bank",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "debit card",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "debit card",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "debit card",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "debit card",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "verification",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "verification",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "verification",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "verification",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "full name",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "full name",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "full name",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "full name",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "date of birth",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "date of birth",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "date of birth",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "date of birth",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "confirm",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "confirm",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "confirm",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "entity": "confirm",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "personal loan",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "personal loan",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "personal loan",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "personal loan",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "enquiry",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "enquiry",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "enquiry",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "enquiry",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "call",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "call",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "call",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "call",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "purpose",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "purpose",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "purpose",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "purpose",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "explain",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "explain",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "explain",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "entity": "explain",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "bank",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "bank",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "bank",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "bank",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "fraud",
+      "provider": "together_ai",
+      "found": true
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "fraud",
+      "provider": "groq",
+      "found": true
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "fraud",
+      "provider": "fireworks",
+      "found": true
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "fraud",
+      "provider": "baseten",
+      "found": true
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "monitoring team",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "monitoring team",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "monitoring team",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "monitoring team",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "debit card",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "debit card",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "debit card",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "debit card",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "unusual",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "unusual",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "unusual",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "unusual",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "online",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "online",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "online",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "online",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "transaction",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "transaction",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "transaction",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "transaction",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "19800",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "19800",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "19800",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "19800",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "payment",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "payment",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "payment",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "payment",
+      "provider": "baseten",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "mumbai",
+      "provider": "together_ai",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "mumbai",
+      "provider": "groq",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "mumbai",
+      "provider": "fireworks",
+      "found": false
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "entity": "mumbai",
+      "provider": "baseten",
+      "found": false
+    }
+  ],
+  "agreement": [
+    {
+      "filename": "credit-card-application-1-hinglish.m4a",
+      "min_wer": 0.5455,
+      "max_wer": 0.5455,
+      "spread": 0.0,
+      "word_agreement": 0.9166666666666666
+    },
+    {
+      "filename": "debit-card-verification-1-Kannada.m4a",
+      "min_wer": 0.6667,
+      "max_wer": 0.8095,
+      "spread": 0.14280000000000004,
+      "word_agreement": 0.3684210526315789
+    },
+    {
+      "filename": "gpay-fraud-1-hinglish.m4a",
+      "min_wer": 0.1667,
+      "max_wer": 0.3333,
+      "spread": 0.1666,
+      "word_agreement": 0.38461538461538464
+    },
+    {
+      "filename": "indicvoices_hi_01.wav",
+      "min_wer": 0.0,
+      "max_wer": 0.05,
+      "spread": 0.05,
+      "word_agreement": 0.95
+    },
+    {
+      "filename": "indicvoices_hi_02.wav",
+      "min_wer": 0.2174,
+      "max_wer": 0.3043,
+      "spread": 0.0869,
+      "word_agreement": 0.8695652173913043
+    },
+    {
+      "filename": "indicvoices_hi_03.wav",
+      "min_wer": 0.0323,
+      "max_wer": 0.1935,
+      "spread": 0.1612,
+      "word_agreement": 0.5
+    },
+    {
+      "filename": "indicvoices_hi_04.wav",
+      "min_wer": 0.3333,
+      "max_wer": 1.0,
+      "spread": 0.6667000000000001,
+      "word_agreement": 0.0
+    },
+    {
+      "filename": "indicvoices_hi_05.wav",
+      "min_wer": 0.5,
+      "max_wer": 0.5,
+      "spread": 0.0,
+      "word_agreement": 0.0
+    },
+    {
+      "filename": "indicvoices_hi_06.wav",
+      "min_wer": 0.3699,
+      "max_wer": 0.7945,
+      "spread": 0.4246,
+      "word_agreement": 0.34782608695652173
+    },
+    {
+      "filename": "indicvoices_hi_07.wav",
+      "min_wer": 0.3571,
+      "max_wer": 0.3571,
+      "spread": 0.0,
+      "word_agreement": 0.7142857142857143
+    },
+    {
+      "filename": "indicvoices_ka_01.wav",
+      "min_wer": 0.75,
+      "max_wer": 1.3125,
+      "spread": 0.5625,
+      "word_agreement": 0.0
+    },
+    {
+      "filename": "indicvoices_ka_02.wav",
+      "min_wer": 0.8387,
+      "max_wer": 0.871,
+      "spread": 0.032299999999999995,
+      "word_agreement": 0.0
+    },
+    {
+      "filename": "indicvoices_ka_03.wav",
+      "min_wer": 0.8158,
+      "max_wer": 0.9737,
+      "spread": 0.15790000000000004,
+      "word_agreement": 0.1724137931034483
+    },
+    {
+      "filename": "indicvoices_ka_04.wav",
+      "min_wer": 0.6667,
+      "max_wer": 0.7778,
+      "spread": 0.11110000000000009,
+      "word_agreement": 0.0
+    },
+    {
+      "filename": "indicvoices_ka_05.wav",
+      "min_wer": 0.7895,
+      "max_wer": 1.0,
+      "spread": 0.21050000000000002,
+      "word_agreement": 0.42105263157894735
+    },
+    {
+      "filename": "indicvoices_ka_06.wav",
+      "min_wer": 0.75,
+      "max_wer": 1.0,
+      "spread": 0.25,
+      "word_agreement": 0.1111111111111111
+    },
+    {
+      "filename": "indicvoices_ka_07.wav",
+      "min_wer": 0.7778,
+      "max_wer": 0.7778,
+      "spread": 0.0,
+      "word_agreement": 0.125
+    },
+    {
+      "filename": "loan-enquiry-1-Kannada.m4a",
+      "min_wer": 0.65,
+      "max_wer": 0.75,
+      "spread": 0.09999999999999998,
+      "word_agreement": 0.5
+    },
+    {
+      "filename": "suspicious-transaction-1-Kannada.m4a",
+      "min_wer": 0.8649,
+      "max_wer": 0.8649,
+      "spread": 0.0,
+      "word_agreement": 0.3103448275862069
+    },
+    {
+      "filename": "svarah_en_01.wav",
+      "min_wer": 0.0,
+      "max_wer": 0.0,
+      "spread": 0.0,
+      "word_agreement": 0.9166666666666666
+    },
+    {
+      "filename": "svarah_en_02.wav",
+      "min_wer": 0.0,
+      "max_wer": 0.0,
+      "spread": 0.0,
+      "word_agreement": 1.0
+    },
+    {
+      "filename": "svarah_en_03.wav",
+      "min_wer": 0.0435,
+      "max_wer": 0.0435,
+      "spread": 0.0,
+      "word_agreement": 1.0
+    },
+    {
+      "filename": "svarah_en_04.wav",
+      "min_wer": 0.1111,
+      "max_wer": 0.2222,
+      "spread": 0.1111,
+      "word_agreement": 0.2222222222222222
+    },
+    {
+      "filename": "svarah_en_05.wav",
+      "min_wer": 0.0,
+      "max_wer": 0.0,
+      "spread": 0.0,
+      "word_agreement": 1.0
+    },
+    {
+      "filename": "svarah_en_06.wav",
+      "min_wer": 0.0,
+      "max_wer": 0.0,
+      "spread": 0.0,
+      "word_agreement": 1.0
+    },
+    {
+      "filename": "svarah_en_07.wav",
+      "min_wer": 0.0303,
+      "max_wer": 0.0303,
+      "spread": 0.0,
+      "word_agreement": 0.96875
+    },
+    {
+      "filename": "transaction-check-1-hinglish.m4a",
+      "min_wer": 0.2414,
+      "max_wer": 0.4138,
+      "spread": 0.1724,
+      "word_agreement": 0.6153846153846154
+    },
+    {
+      "filename": "transaction-check-2-hinglish.m4a",
+      "min_wer": 0.2857,
+      "max_wer": 0.3333,
+      "spread": 0.047599999999999976,
+      "word_agreement": 0.9047619047619048
+    }
+  ]
+}

@@ -25,7 +25,7 @@ def _get_client() -> OpenAI:
 def transcribe(
     audio_path: str,
     language_code: Optional[str] = None,
-    model: str = "whisper-large-v3-turbo",
+    model: str = "whisper-large-v3",
 ) -> dict:
     """Transcribe audio using Whisper on Groq.
 

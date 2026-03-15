@@ -9,11 +9,17 @@ from dotenv import load_dotenv
 PROJECT_ROOT = Path(__file__).parent.parent
 load_dotenv(PROJECT_ROOT / ".env")
 
-# API Keys
+# API Keys — existing providers
 SARVAM_API_KEY = os.getenv("SARVAM_API_KEY", "")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 HF_TOKEN = os.getenv("HF_TOKEN", "")
+
+# API Keys — inference platform providers (Part 2)
+TOGETHER_API_KEY = os.getenv("TOGETHER_API_KEY", "")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+FIREWORKS_API_KEY = os.getenv("FIREWORKS_API_KEY", "")
+BASETEN_API_KEY = os.getenv("BASETEN_API_KEY", "")
 
 # Paths
 DATA_DIR = PROJECT_ROOT / "data"

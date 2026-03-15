@@ -1,4 +1,8 @@
-"""OpenAI Whisper ASR provider wrapper."""
+"""Fireworks AI Whisper ASR provider wrapper.
+
+Uses OpenAI-compatible API at https://audio-prod.api.fireworks.ai/v1.
+Docs: https://docs.fireworks.ai/guides/querying-asr-models
+"""
 
 import time
 from pathlib import Path
@@ -6,7 +10,7 @@ from typing import Optional
 
 from openai import OpenAI
 
-from src.config import OPENAI_API_KEY
+from src.config import FIREWORKS_API_KEY
 
 _client = None
 
@@ -14,32 +18,34 @@ _client = None
 def _get_client() -> OpenAI:
     global _client
     if _client is None:
-        _client = OpenAI(api_key=OPENAI_API_KEY)
+        _client = OpenAI(api_key=FIREWORKS_API_KEY, base_url="https://audio-prod.api.fireworks.ai/v1")
     return _client
 
 
 def transcribe(
     audio_path: str,
     language_code: Optional[str] = None,
-    model: str = "gpt-4o-transcribe",
+    model: str = "whisper-v3",
 ) -> dict:
-    """Transcribe audio using OpenAI Whisper.
+    """Transcribe audio using Whisper v3 on Fireworks AI.
 
     Args:
-        audio_path: Path to audio file.
+        audio_path: Path to audio file (WAV, MP3, M4A supported).
         language_code: ISO-639-1 language code (e.g. "hi", "kn", "en").
-            If None, Whisper auto-detects.
-        model: Model name. Default "gpt-4o-transcribe".
-            Options: "gpt-4o-transcribe", "gpt-4o-mini-transcribe", "whisper-1".
+        model: Model name. Options: "whisper-v3", "whisper-v3-turbo".
 
     Returns:
-        dict with keys: transcript, language_code, latency_seconds, raw_response
+        dict with keys: provider, model, transcript, language_code, latency_seconds, raw_response
     """
     client = _get_client()
 
     with open(audio_path, "rb") as f:
-        fmt = "json" if model.startswith("gpt-") else "verbose_json"
-        kwargs = {"model": model, "file": f, "response_format": fmt}
+        kwargs = {
+            "model": model,
+            "file": f,
+            "response_format": "json",
+            "temperature": 0,
+        }
         if language_code:
             kwargs["language"] = language_code
 
@@ -48,10 +54,10 @@ def transcribe(
         latency = time.perf_counter() - start
 
     return {
-        "provider": "whisper",
+        "provider": "fireworks",
         "model": model,
         "transcript": result.text,
-        "language_code": getattr(result, "language", None),
+        "language_code": language_code,
         "latency_seconds": round(latency, 3),
         "raw_response": result.model_dump() if hasattr(result, "model_dump") else str(result),
     }

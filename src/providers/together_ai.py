@@ -1,4 +1,8 @@
-"""OpenAI Whisper ASR provider wrapper."""
+"""Together AI Whisper ASR provider wrapper.
+
+Uses OpenAI-compatible API at https://api.together.xyz/v1.
+Docs: https://docs.together.ai/docs/speech-to-text
+"""
 
 import time
 from pathlib import Path
@@ -6,7 +10,7 @@ from typing import Optional
 
 from openai import OpenAI
 
-from src.config import OPENAI_API_KEY
+from src.config import TOGETHER_API_KEY
 
 _client = None
 
@@ -14,32 +18,34 @@ _client = None
 def _get_client() -> OpenAI:
     global _client
     if _client is None:
-        _client = OpenAI(api_key=OPENAI_API_KEY)
+        _client = OpenAI(api_key=TOGETHER_API_KEY, base_url="https://api.together.xyz/v1")
     return _client
 
 
 def transcribe(
     audio_path: str,
     language_code: Optional[str] = None,
-    model: str = "gpt-4o-transcribe",
+    model: str = "openai/whisper-large-v3",
 ) -> dict:
-    """Transcribe audio using OpenAI Whisper.
+    """Transcribe audio using Whisper Large v3 on Together AI.
 
     Args:
-        audio_path: Path to audio file.
+        audio_path: Path to audio file (WAV, MP3, M4A, FLAC supported).
         language_code: ISO-639-1 language code (e.g. "hi", "kn", "en").
-            If None, Whisper auto-detects.
-        model: Model name. Default "gpt-4o-transcribe".
-            Options: "gpt-4o-transcribe", "gpt-4o-mini-transcribe", "whisper-1".
+        model: Model name. Default "openai/whisper-large-v3".
 
     Returns:
-        dict with keys: transcript, language_code, latency_seconds, raw_response
+        dict with keys: provider, model, transcript, language_code, latency_seconds, raw_response
     """
     client = _get_client()
 
     with open(audio_path, "rb") as f:
-        fmt = "json" if model.startswith("gpt-") else "verbose_json"
-        kwargs = {"model": model, "file": f, "response_format": fmt}
+        kwargs = {
+            "model": model,
+            "file": f,
+            "response_format": "json",
+            "temperature": 0,
+        }
         if language_code:
             kwargs["language"] = language_code
 
@@ -48,10 +54,10 @@ def transcribe(
         latency = time.perf_counter() - start
 
     return {
-        "provider": "whisper",
+        "provider": "together_ai",
         "model": model,
         "transcript": result.text,
-        "language_code": getattr(result, "language", None),
+        "language_code": language_code,
         "latency_seconds": round(latency, 3),
         "raw_response": result.model_dump() if hasattr(result, "model_dump") else str(result),
     }

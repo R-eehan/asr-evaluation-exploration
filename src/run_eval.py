@@ -10,14 +10,20 @@ from typing import Optional
 
 from src.config import AUDIO_DIR, GROUND_TRUTH_DIR, RESULTS_DIR
 from src.providers import sarvam, elevenlabs_stt, whisper
+from src.providers import together_ai, groq_whisper, fireworks_whisper, baseten_whisper
 from src.metrics.wer import compute_wer
 from src.metrics.cer import compute_cer
 from src.metrics.latency import compute_latency_stats
+from src.metrics.cost import compute_cost, get_audio_duration_seconds
 
 PROVIDERS = {
     "sarvam": sarvam,
     "elevenlabs": elevenlabs_stt,
     "whisper": whisper,
+    "together_ai": together_ai,
+    "groq": groq_whisper,
+    "fireworks": fireworks_whisper,
+    "baseten": baseten_whisper,
 }
 
 # Map language codes from ground truth to provider-specific formats
@@ -46,6 +52,18 @@ ELEVENLABS_LANG_MAP = {
     "en-IN": "en",
     "hi-en": "hi",
     "kn-en": "kn",
+}
+
+# Unified lookup: provider name -> language map
+# All Whisper-based inference platforms use the same language codes as OpenAI Whisper
+LANG_MAPS = {
+    "sarvam": SARVAM_LANG_MAP,
+    "whisper": WHISPER_LANG_MAP,
+    "elevenlabs": ELEVENLABS_LANG_MAP,
+    "together_ai": WHISPER_LANG_MAP,
+    "groq": WHISPER_LANG_MAP,
+    "fireworks": WHISPER_LANG_MAP,
+    "baseten": WHISPER_LANG_MAP,
 }
 
 
@@ -80,12 +98,8 @@ def transcribe_single(provider_name: str, audio_path: str, language: str) -> dic
     provider = PROVIDERS[provider_name]
 
     # Map language code for each provider
-    if provider_name == "sarvam":
-        lang = SARVAM_LANG_MAP.get(language)
-    elif provider_name == "whisper":
-        lang = WHISPER_LANG_MAP.get(language)
-    else:
-        lang = ELEVENLABS_LANG_MAP.get(language)
+    lang_map = LANG_MAPS.get(provider_name, WHISPER_LANG_MAP)
+    lang = lang_map.get(language, language)
 
     try:
         result = provider.transcribe(audio_path, language_code=lang)
@@ -138,6 +152,12 @@ def run_evaluation(
             print(f"  SKIP {filename} — file not found at {audio_path}")
             continue
 
+        # Compute audio duration once per file for cost calculation
+        try:
+            audio_duration_sec = get_audio_duration_seconds(audio_path)
+        except Exception:
+            audio_duration_sec = None
+
         for provider_name in providers:
             count += 1
             print(f"  [{count}/{total}] {provider_name} <- {filename} ...", end=" ", flush=True)
@@ -153,13 +173,19 @@ def run_evaluation(
                 cer_result = {"cer": None}
                 print(f"ERROR: {result.get('error', 'unknown')}")
 
+            # Compute cost for this request
+            model_name = result.get("model", "")
+            cost_usd = None
+            if audio_duration_sec is not None and result["status"] == "ok":
+                cost_usd = compute_cost(provider_name, model_name, audio_duration_sec)
+
             results.append({
                 "filename": filename,
                 "source": source,
                 "language": language,
                 "scenario": scenario,
                 "provider": result.get("provider", provider_name),
-                "model": result.get("model", ""),
+                "model": model_name,
                 "reference": reference,
                 "hypothesis": result.get("transcript", ""),
                 "wer": wer_result["wer"],
@@ -168,6 +194,8 @@ def run_evaluation(
                 "deletions": wer_result.get("deletions", 0),
                 "insertions": wer_result.get("insertions", 0),
                 "latency_seconds": result.get("latency_seconds", 0),
+                "audio_duration_sec": audio_duration_sec,
+                "cost_usd": cost_usd,
                 "status": result["status"],
                 "error": result.get("error", ""),
             })

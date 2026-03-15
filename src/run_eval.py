@@ -3,6 +3,7 @@
 import json
 import csv
 import sys
+import time
 import traceback
 from datetime import datetime
 from pathlib import Path
@@ -93,7 +94,38 @@ def load_ground_truth() -> list:
     return entries
 
 
-def transcribe_single(provider_name: str, audio_path: str, language: str) -> dict:
+def load_existing_results(resume_file: str) -> tuple[set, list]:
+    """Load completed results from a JSONL file.
+
+    Returns:
+        Tuple of (completed_keys, existing_results).
+        Keys are (provider_name, filename, model_override, run) tuples.
+        existing_results is a list of all result dicts from the JSONL.
+    """
+    completed = set()
+    existing = []
+    path = Path(resume_file)
+    if path.exists():
+        with open(path) as f:
+            for line in f:
+                try:
+                    r = json.loads(line)
+                    # Key on model_override (what was requested), not model (what provider returned)
+                    key = (r.get("_provider_name", r["provider"]), r["filename"],
+                           r.get("_model_override", ""), r.get("run", 1))
+                    completed.add(key)
+                    existing.append(r)
+                except (json.JSONDecodeError, KeyError):
+                    continue
+    return completed, existing
+
+
+def transcribe_single(
+    provider_name: str,
+    audio_path: str,
+    language: str,
+    model_override: Optional[str] = None,
+) -> dict:
     """Run a single transcription, returning result or error info."""
     provider = PROVIDERS[provider_name]
 
@@ -102,12 +134,16 @@ def transcribe_single(provider_name: str, audio_path: str, language: str) -> dic
     lang = lang_map.get(language, language)
 
     try:
-        result = provider.transcribe(audio_path, language_code=lang)
+        kwargs = {"audio_path": audio_path, "language_code": lang}
+        if model_override:
+            kwargs["model"] = model_override
+        result = provider.transcribe(**kwargs)
         return {"status": "ok", **result}
     except Exception as e:
         return {
             "status": "error",
             "provider": provider_name,
+            "model": model_override or "",
             "transcript": "",
             "latency_seconds": 0,
             "error": f"{type(e).__name__}: {e}",
@@ -118,6 +154,11 @@ def run_evaluation(
     entries: Optional[list] = None,
     providers: Optional[list] = None,
     limit: Optional[int] = None,
+    files: Optional[list] = None,
+    repeats: int = 1,
+    model_override: Optional[str] = None,
+    delay: float = 0,
+    resume_file: Optional[str] = None,
 ) -> list:
     """Run full evaluation across all entries and providers.
 
@@ -125,20 +166,46 @@ def run_evaluation(
         entries: Ground truth entries. If None, loads from files.
         providers: List of provider names. If None, uses all.
         limit: Max number of audio files to process (for testing).
+        files: Specific filenames to include (e.g. ["indicvoices_hi_01.wav"]).
+        repeats: Number of times to run each (file, provider) pair.
+        model_override: Override the default model for all providers.
+        delay: Seconds to wait between API calls (rate limit protection).
+        resume_file: Path to JSONL file for incremental writes + resumability.
+            If set, completed pairs are skipped and new results are appended.
 
     Returns:
-        List of result dicts, one per (audio_file, provider) pair.
+        List of result dicts, one per (audio_file, provider, run) triple.
     """
     if entries is None:
         entries = load_ground_truth()
     if providers is None:
         providers = list(PROVIDERS.keys())
+    if files:
+        entries = [e for e in entries if e["filename"] in files]
     if limit:
         entries = entries[:limit]
 
+    # Pre-filter entries with missing audio files for accurate progress counter
+    valid_entries = []
+    for entry in entries:
+        if Path(entry["audio_path"]).exists():
+            valid_entries.append(entry)
+        else:
+            print(f"  SKIP {entry['filename']} — file not found at {entry['audio_path']}")
+    entries = valid_entries
+
+    # Load already-completed pairs if resuming
+    completed = set()
+    existing_results = []
+    if resume_file:
+        completed, existing_results = load_existing_results(resume_file)
+        if completed:
+            print(f"  Resuming: {len(completed)} results already completed, will skip.\n")
+
     results = []
-    total = len(entries) * len(providers)
+    total = len(entries) * len(providers) * repeats
     count = 0
+    skipped = 0
 
     for entry in entries:
         audio_path = entry["audio_path"]
@@ -148,10 +215,6 @@ def run_evaluation(
         scenario = entry.get("scenario", "")
         source = entry.get("source", "")
 
-        if not Path(audio_path).exists():
-            print(f"  SKIP {filename} — file not found at {audio_path}")
-            continue
-
         # Compute audio duration once per file for cost calculation
         try:
             audio_duration_sec = get_audio_duration_seconds(audio_path)
@@ -159,48 +222,81 @@ def run_evaluation(
             audio_duration_sec = None
 
         for provider_name in providers:
-            count += 1
-            print(f"  [{count}/{total}] {provider_name} <- {filename} ...", end=" ", flush=True)
+            for run in range(1, repeats + 1):
+                count += 1
 
-            result = transcribe_single(provider_name, audio_path, language)
+                # Check if already completed (resumability)
+                # Key on provider_name and model_override (what was requested),
+                # not the provider's returned model name
+                resume_key = (provider_name, filename, model_override or "", run)
+                if resume_key in completed:
+                    skipped += 1
+                    run_label = f" (run {run}/{repeats})" if repeats > 1 else ""
+                    print(f"  [{count}/{total}] {provider_name} <- {filename}{run_label} ... CACHED")
+                    continue
 
-            if result["status"] == "ok":
-                wer_result = compute_wer(reference, result["transcript"])
-                cer_result = compute_cer(reference, result["transcript"])
-                print(f"WER={wer_result['wer']:.2%} latency={result['latency_seconds']}s")
-            else:
-                wer_result = {"wer": None, "substitutions": 0, "deletions": 0, "insertions": 0}
-                cer_result = {"cer": None}
-                print(f"ERROR: {result.get('error', 'unknown')}")
+                run_label = f" (run {run}/{repeats})" if repeats > 1 else ""
+                print(f"  [{count}/{total}] {provider_name} <- {filename}{run_label} ...", end=" ", flush=True)
 
-            # Compute cost for this request
-            model_name = result.get("model", "")
-            cost_usd = None
-            if audio_duration_sec is not None and result["status"] == "ok":
-                cost_usd = compute_cost(provider_name, model_name, audio_duration_sec)
+                result = transcribe_single(provider_name, audio_path, language, model_override)
 
-            results.append({
-                "filename": filename,
-                "source": source,
-                "language": language,
-                "scenario": scenario,
-                "provider": result.get("provider", provider_name),
-                "model": model_name,
-                "reference": reference,
-                "hypothesis": result.get("transcript", ""),
-                "wer": wer_result["wer"],
-                "cer": cer_result["cer"],
-                "substitutions": wer_result.get("substitutions", 0),
-                "deletions": wer_result.get("deletions", 0),
-                "insertions": wer_result.get("insertions", 0),
-                "latency_seconds": result.get("latency_seconds", 0),
-                "audio_duration_sec": audio_duration_sec,
-                "cost_usd": cost_usd,
-                "status": result["status"],
-                "error": result.get("error", ""),
-            })
+                if result["status"] == "ok":
+                    wer_result = compute_wer(reference, result["transcript"])
+                    cer_result = compute_cer(reference, result["transcript"])
+                    print(f"WER={wer_result['wer']:.2%} latency={result['latency_seconds']}s")
+                else:
+                    wer_result = {"wer": None, "substitutions": 0, "deletions": 0, "insertions": 0}
+                    cer_result = {"cer": None}
+                    print(f"ERROR: {result.get('error', 'unknown')}")
 
-    return results
+                # Compute cost for this request
+                model_name = result.get("model", "")
+                cost_usd = None
+                if audio_duration_sec is not None and result["status"] == "ok":
+                    cost_usd = compute_cost(provider_name, model_name, audio_duration_sec)
+
+                row = {
+                    "filename": filename,
+                    "source": source,
+                    "language": language,
+                    "scenario": scenario,
+                    "provider": result.get("provider", provider_name),
+                    "model": model_name,
+                    "run": run,
+                    "reference": reference,
+                    "hypothesis": result.get("transcript", ""),
+                    "wer": wer_result["wer"],
+                    "cer": cer_result["cer"],
+                    "substitutions": wer_result.get("substitutions", 0),
+                    "deletions": wer_result.get("deletions", 0),
+                    "insertions": wer_result.get("insertions", 0),
+                    "latency_seconds": result.get("latency_seconds", 0),
+                    "audio_duration_sec": audio_duration_sec,
+                    "cost_usd": cost_usd,
+                    "status": result["status"],
+                    "error": result.get("error", ""),
+                    # Tracking fields for resumability (keyed on what was requested)
+                    "_provider_name": provider_name,
+                    "_model_override": model_override or "",
+                }
+
+                results.append(row)
+
+                # Write incrementally to JSONL for resumability
+                if resume_file:
+                    with open(resume_file, "a") as f:
+                        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+                # Rate limit protection
+                if delay > 0:
+                    time.sleep(delay)
+
+    if skipped:
+        print(f"\n  Skipped {skipped} already-completed pairs.")
+
+    # Merge existing + new results so save_results and print_summary get the full picture
+    all_results = existing_results + results
+    return all_results
 
 
 def save_results(results: list, tag: str = "") -> tuple:
@@ -248,11 +344,19 @@ def print_summary(results: list):
         latencies = [r["latency_seconds"] for r in items]
         lat_stats = compute_latency_stats(latencies)
 
-        print(f"\n--- {provider.upper()} ({len(items)} files) ---")
+        model_name = items[0].get("model", "")
+        model_label = f" [{model_name}]" if model_name else ""
+
+        print(f"\n--- {provider.upper()}{model_label} ({len(items)} files) ---")
         print(f"  WER:     mean={sum(wers)/len(wers):.2%}  min={min(wers):.2%}  max={max(wers):.2%}")
         if cers:
             print(f"  CER:     mean={sum(cers)/len(cers):.2%}  min={min(cers):.2%}  max={max(cers):.2%}")
         print(f"  Latency: p50={lat_stats['p50']}s  p95={lat_stats['p95']}s  mean={lat_stats['mean']}s")
+
+        # Cost summary
+        costs = [r["cost_usd"] for r in items if r.get("cost_usd") is not None]
+        if costs:
+            print(f"  Cost:    total=${sum(costs):.4f}  per_file=${sum(costs)/len(costs):.6f}")
 
         # Errors
         errors = [r for r in results if r["provider"] == provider and r["status"] == "error"]
@@ -267,8 +371,13 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description="Run ASR evaluation")
     parser.add_argument("--limit", type=int, default=None, help="Max audio files to process")
+    parser.add_argument("--files", nargs="+", default=None, help="Specific filenames to process (e.g. indicvoices_hi_01.wav)")
     parser.add_argument("--providers", nargs="+", default=None, help="Providers to test")
     parser.add_argument("--tag", default="", help="Tag for output filenames")
+    parser.add_argument("--repeats", type=int, default=1, help="Repeat each (file, provider) pair N times")
+    parser.add_argument("--model", default=None, help="Override default model for all providers")
+    parser.add_argument("--delay", type=float, default=0, help="Seconds between API calls (rate limit protection)")
+    parser.add_argument("--resume", default=None, help="JSONL file path for incremental writes + resume from")
     args = parser.parse_args()
 
     print(f"Loading ground truth...")
@@ -277,10 +386,29 @@ def main():
 
     providers = args.providers or list(PROVIDERS.keys())
     print(f"Providers: {', '.join(providers)}")
-    print(f"Limit: {args.limit or 'all'}\n")
+    print(f"Limit: {args.limit or 'all'}")
+    if args.files:
+        print(f"Files: {', '.join(args.files)}")
+    print(f"Repeats: {args.repeats}")
+    if args.model:
+        print(f"Model override: {args.model}")
+    if args.delay:
+        print(f"Delay: {args.delay}s between calls")
+    if args.resume:
+        print(f"Resume file: {args.resume}")
+    print()
 
     print("Starting evaluation...")
-    results = run_evaluation(entries, providers=providers, limit=args.limit)
+    results = run_evaluation(
+        entries,
+        providers=providers,
+        limit=args.limit,
+        files=args.files,
+        repeats=args.repeats,
+        model_override=args.model,
+        delay=args.delay,
+        resume_file=args.resume,
+    )
 
     csv_path, json_path = save_results(results, tag=args.tag)
     print(f"\nResults saved to:\n  CSV:  {csv_path}\n  JSON: {json_path}")
